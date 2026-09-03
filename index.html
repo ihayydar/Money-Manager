@@ -280,7 +280,7 @@ function uid(){
 function saveData(){ localStorage.setItem(STORE_KEY, JSON.stringify(data)); render(); }
 function calcTokens(raw){
   raw=String(raw||"").replace(/\s+/g,"").replace(/[x×]/g,"*");
-  const num="(?:\d+(?:\.\d*)?|\.\d+)";
+  const num="(?:\\d+(?:\\.\\d*)?|\\.\\d+)";
   if(!raw || !new RegExp("^-?"+num+"(?:[+*-]"+num+")*$").test(raw)) return null;
   const tokens=[];
   const first=raw.match(new RegExp("^-?"+num));
