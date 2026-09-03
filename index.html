@@ -177,8 +177,7 @@ button{touch-action:manipulation}
   <div class="field"><label>Held Action</label><select id="behalfAction" onchange="changeBehalfAction(this.value)"><option value="plus">Receive / Hold</option><option value="minus">Return / Release</option></select></div>
   <div class="field" id="entryCategoryWrap">
     <label>Expense Category</label>
-    <select id="entryCategory" onchange="syncExpenseCategoryQuick()"></select>
-    <div id="expenseCategoryQuick" class="categoryQuick" aria-label="Expense categories"></div>
+    <select id="entryCategory"></select>
   </div>
   <div id="entryCalc"></div>
   <div id="entryPreview" class="preview"></div>
@@ -275,20 +274,39 @@ function uid(){
   return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2);
 }
 function saveData(){ localStorage.setItem(STORE_KEY, JSON.stringify(data)); render(); }
+function calcTokens(raw){
+  raw=String(raw||"").replace(/\s+/g,"").replace(/[x×]/g,"*");
+  const num="(?:\d+(?:\.\d*)?|\.\d+)";
+  if(!raw || !new RegExp("^-?"+num+"(?:[+*-]"+num+")*$").test(raw)) return null;
+  const tokens=[];
+  const first=raw.match(new RegExp("^-?"+num));
+  if(!first) return null;
+  tokens.push(first[0]);
+  const rest=raw.slice(first[0].length);
+  const re=new RegExp("([+*-])("+num+")","g");
+  let m;
+  while((m=re.exec(rest))!==null) tokens.push(m[1],m[2]);
+  return tokens.length>1 && (tokens.length%2===1) || tokens.length===1 ? tokens : null;
+}
 function evalCalc(raw){
-  raw=String(raw||"").replace(/\s+/g,"");
-  if(!raw || !/^-?\d+(?:\.\d+)?(?:[+-]\d+(?:\.\d+)?)*$/.test(raw)) return 0;
-  let total=0, sign=1, token="";
-  for(let i=0;i<raw.length;i++){
-    const ch=raw[i];
-    if((ch==="+"||ch==="-") && token!==""){
-      total += sign*Number(token); token=""; sign=ch==="+"?1:-1;
-    }else if(ch==="-" && token==="" && i===0){ sign=-1; }
-    else token+=ch;
+  const tokens=calcTokens(raw);
+  if(!tokens) return 0;
+  let values=[Number(tokens[0])], ops=[];
+  for(let i=1;i<tokens.length;i+=2){
+    const op=tokens[i], n=Number(tokens[i+1]);
+    if(!Number.isFinite(n)) return 0;
+    if(op==="*") values[values.length-1]*=n;
+    else { ops.push(op); values.push(n); }
   }
-  if(token==="") return 0;
-  total += sign*Number(token);
+  let total=values[0];
+  for(let i=0;i<ops.length;i++) total=ops[i]==="+" ? total+values[i+1] : total-values[i+1];
   return Number.isFinite(total)?total:0;
+}
+function calcDisplayValue(raw){
+  raw=String(raw||"");
+  if(!raw) return 0;
+  const partial=/[+*-]$/.test(raw) ? raw.slice(0,-1) : raw;
+  return evalCalc(partial);
 }
 function activeAccounts(){ return data.accounts.filter(a=>a.active); }
 function activeOptions(selected=""){
@@ -531,17 +549,18 @@ function calcHTML(id,label){
     <button onclick="press('${id}','7')">7</button><button onclick="press('${id}','8')">8</button><button onclick="press('${id}','9')">9</button><button class="clr" onclick="clearCalc('${id}')">C</button>
     <button onclick="press('${id}','4')">4</button><button onclick="press('${id}','5')">5</button><button onclick="press('${id}','6')">6</button><button class="op" onclick="press('${id}','+')">+</button>
     <button onclick="press('${id}','1')">1</button><button onclick="press('${id}','2')">2</button><button onclick="press('${id}','3')">3</button><button class="op" onclick="press('${id}','-')">−</button>
-    <button onclick="press('${id}','0')">0</button><button onclick="press('${id}','.')">.</button><button onclick="backspace('${id}')">⌫</button><button class="op" onclick="press('${id}','+')">+</button>
+    <button onclick="press('${id}','0')">0</button><button onclick="press('${id}','.')">.</button><button onclick="backspace('${id}')">⌫</button><button class="op" onclick="press('${id}','*')">×</button>
   </div></div>`;
 }
 function press(id,ch){
   let raw=calc[id]||"";
-  if(/[+\-]/.test(ch)){
+  const isOp=/[+\-*]/.test(ch);
+  if(isOp){
     if(!raw){ if(ch==="-") raw="-"; else return; }
-    else if(/[+\-]$/.test(raw)){ raw=raw.slice(0,-1)+ch; }
+    else if(/[+\-*]$/.test(raw)){ raw=raw.slice(0,-1)+ch; }
     else raw+=ch;
   }else if(ch==="."){
-    const part=raw.split(/[+\-]/).pop();
+    const part=raw.split(/[+\-*]/).pop();
     if(part.includes(".")) return;
     raw += part==="" ? "0." : ".";
   }else{
@@ -551,8 +570,18 @@ function press(id,ch){
 }
 function clearCalc(id){ calc[id]=""; refreshCalc(id); }
 function backspace(id){ calc[id]=(calc[id]||"").slice(0,-1); refreshCalc(id); }
+function calcExpression(raw){
+  return String(raw||"").replace(/([+\-*])/g," $1 ").replace(/\*/g,"×").replace(/(^| )-/g,"$1−");
+}
 function refreshCalc(id){
-  const val=evalCalc(calc[id]); const el=document.getElementById(id+"Display"); if(el)el.textContent=fmt(val);
+  const raw=calc[id]||"";
+  const val=calcDisplayValue(raw);
+  const el=document.getElementById(id+"Display");
+  const preview=document.getElementById(id+"Preview");
+  if(el)el.textContent=fmt(val);
+  if(preview){
+    preview.innerHTML=raw ? `<span>Calculation</span><strong>${calcExpression(raw)}</strong>` : "";
+  }
   if(id==="entry") refreshEntryPreview();
   if(id==="transfer") refreshTransferPreview();
   if(id==="adjust") refreshAdjustPreview();
@@ -572,21 +601,6 @@ function go(id,index){
 function closeModal(id){ document.getElementById(id).style.display="none"; if(id==="entryModal") entryType.disabled=false; editState={type:null,id:null}; }
 
 /* ---------- Unified Income / Expense / Behalf Entry ---------- */
-function renderExpenseCategoryQuick(selected=""){
-  const box=document.getElementById("expenseCategoryQuick");
-  if(!box)return;
-  if(mode!=="expense"){box.innerHTML="";box.style.display="none";return;}
-  box.style.display="grid";
-  box.innerHTML=EXPENSE_CATEGORIES.map(c=>`<button type="button" class="catQuick ${c===selected?"active":""}" onclick="pickExpenseCategory(${JSON.stringify(c)})">${c}</button>`).join("");
-}
-function pickExpenseCategory(category){
-  entryCategory.value=category;
-  syncExpenseCategoryQuick();
-}
-function syncExpenseCategoryQuick(){
-  if(mode!=="expense")return;
-  document.querySelectorAll("#expenseCategoryQuick .catQuick").forEach(b=>b.classList.toggle("active",b.textContent===entryCategory.value));
-}
 function openEntry(newMode){
   mode=newMode; editState={type:null,id:null}; entryDeleteBtn.style.display="none"; entryViewPhoto.style.display="none";
   entryType.disabled=false; entryType.value=newMode==="expense"?"expense":newMode==="behalf"?"behalf":"income";
@@ -605,12 +619,10 @@ function changeEntryType(v){
   entryNote.placeholder=isBehalf?"Person / source / purpose":"Optional";
   if(v==="expense"){
     entryCategory.innerHTML=EXPENSE_CATEGORIES.map(c=>`<option>${c}</option>`).join("");
-    renderExpenseCategoryQuick(entryCategory.value||EXPENSE_CATEGORIES[0]);
+
   }else if(v==="income"){
     entryCategory.innerHTML=INCOME_CATEGORIES.map(c=>`<option>${c}</option>`).join("");
-    renderExpenseCategoryQuick();
   }else{
-    renderExpenseCategoryQuick();
   }
   refreshEntryPreview();
 }
@@ -628,7 +640,7 @@ function editEntry(id){
   entryAccount.innerHTML=data.accounts.filter(a=>a.active||a.id===e.accountId).map(a=>`<option value="${a.id}">${a.name}</option>`).join("");
   entryAccount.value=e.accountId;
   entryCategory.innerHTML=(mode==="income"?INCOME_CATEGORIES:EXPENSE_CATEGORIES).map(c=>`<option ${c===e.category?"selected":""}>${c}</option>`).join("");
-  if(mode==="expense") renderExpenseCategoryQuick(e.category); else renderExpenseCategoryQuick();
+
   entryDate.value=e.date; entryNote.value=e.note||""; entryPhoto.value=""; calc.entry=String(e.amount); refreshCalc("entry"); entryModal.style.display="flex";
 }
 function refreshEntryPreview(){
