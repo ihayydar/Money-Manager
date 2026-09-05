@@ -314,7 +314,7 @@ const initialData = {
     {id:"cash",name:"Cash in Hand",type:"Cash",active:true,opening:0},
     {id:"bank",name:"Bank",type:"Bank",active:true,opening:0},
     {id:"jazz",name:"JazzCash",type:"Wallet",active:false,opening:0},
-    {id:"easy",name:"Easypaisa",type:"Wallet",active:false,opening:0}
+    {id:"easy",name:"Easypaisa",type:"Wallet",active:true,opening:0}
   ],
   entries:[], liabilities:[], transfers:[], adjustments:[], others:[]
 };
@@ -341,7 +341,7 @@ function uid(){
 function saveData(){ localStorage.setItem(STORE_KEY, JSON.stringify(data)); render(); }
 function calcTokens(raw){
   raw=String(raw||"").replace(/\s+/g,"").replace(/[x×]/g,"*").replace(/÷/g,"/");
-  const num="(?:\d+(?:\.\d*)?|\.\d+)";
+  const num="(?:\\d+(?:\\.\d*)?|\\.\d+)";
   if(!raw || !new RegExp("^-?"+num+"(?:[+*/-]"+num+")*$").test(raw)) return null;
   const tokens=[];
   const first=raw.match(new RegExp("^-?"+num));
@@ -488,6 +488,9 @@ function migrateData(){
   data.others = Array.isArray(data.others) ? data.others : [];
 
   data.accounts.forEach(a=>{ if(a.name==="Main Bank") a.name="Bank"; });
+  // Easypaisa is a built-in wallet and must remain selectable for normal Income/Expense/Held entries.
+  const easyAccount=data.accounts.find(a=>a.id==="easy" || String(a.name||"").trim().toLowerCase()==="easypaisa");
+  if(easyAccount && easyAccount.active===false){ easyAccount.active=true; localStorage.setItem(STORE_KEY,JSON.stringify(data)); }
 
   // Merge older Behalf/Other/Loan records into the normal Entries ledger.
   // Each Behalf movement is now one immutable entry: it changes the selected account
