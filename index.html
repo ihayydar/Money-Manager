@@ -231,7 +231,7 @@ input:focus,select:focus{outline:none;border-color:var(--brand);background:var(-
     <select id="entryCategory"></select>
   </div>
   <div id="entryCalc"></div>
-  <div id="entryPreview" class="preview"></div><div class="sub" style="margin-top:6px">Income / Hold → money enters the selected account automatically. Expense / Return → money leaves it.</div>
+  <div id="entryPreview" class="preview"></div><div class="sub" style="margin-top:6px">Income → money enters the selected account. Hold → records money already included in the selected account. Expense / Return → money leaves it.</div>
   <div class="field"><label>Date</label><input id="entryDate" type="date"></div>
   <div class="field"><label>Note / Source / Purpose</label><input id="entryNote" placeholder="Optional"></div>
   <div class="field photoBox">
@@ -589,11 +589,13 @@ function entryDelta(e){
   const amount=Math.abs(Number(e.amount||0));
   if(e.mode==="income") return amount;
   if(e.mode==="expense") return -amount;
-  // Held for Others is real money entering/leaving the selected account.
-  // Receive/Hold increases the account; Return/Release decreases it.
-  // liabilityTotal() separately subtracts the outstanding held amount from Mature,
-  // so receiving someone else's money increases Total Accounts without increasing Mature.
-  if(e.mode==="behalf") return e.behalfDirection==="plus" ? amount : -amount;
+  // Held for Others is a classification of money that is already included in
+  // the selected account balance when the Hold entry is recorded. Therefore
+  // Receive / Hold must NOT add the amount again (otherwise the same money is
+  // double-counted). Returning / Releasing it is a real outflow, so it reduces
+  // the selected account. liabilityTotal() separately tracks the outstanding
+  // amount owed to the other person and subtracts it from Mature.
+  if(e.mode==="behalf") return e.behalfDirection==="plus" ? 0 : -amount;
   return 0;
 }
 function balance(accountId,date=today(),exclude=null){
