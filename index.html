@@ -147,7 +147,7 @@ input:focus,select:focus{outline:none;border-color:var(--brand);background:var(-
     <div class="quick">
       <button onclick="openEntry('income')"><i class="ig">＋</i>Income</button>
       <button onclick="openEntry('expense')"><i class="ir">−</i>Expense</button>
-      <button onclick="openEntry('behalf')"><i class="ia">±</i>Held for Others</button>
+      <button onclick="openHeldWindow()"><i class="ia">±</i>Held for Others</button>
       <button onclick="openTransfer()"><i class="ig">⇄</i>Transfer</button>
       <button onclick="openAdjust()"><i class="iv">↻</i>Adjust</button>
       <button onclick="go('activity',1)"><i class="iv">☷</i>History</button>
@@ -279,6 +279,20 @@ input:focus,select:focus{outline:none;border-color:var(--brand);background:var(-
   <button id="accountDeleteBtn" class="btn danger" style="display:none" onclick="deleteEditing('account')">Delete Account</button>
 </div></div>
 
+<!-- Held for Others dedicated window -->
+<div id="heldModal" class="modal" style="display:none">
+  <div class="sheet">
+    <div class="drag"></div>
+    <div class="head"><div><h2>Held for Others</h2><div class="sub">Money currently held for other people or purposes.</div></div><button class="tiny" onclick="closeModal('heldModal')">Close</button></div>
+    <div class="sumgrid" style="margin-top:12px">
+      <div class="sum"><small>Currently Held</small><b id="heldWindowTotal">₨ 0</b></div>
+      <div class="sum"><small>Entries</small><b id="heldWindowCount">0</b></div>
+    </div>
+    <button class="btn primary" style="margin-top:12px" onclick="closeModal('heldModal');openEntry('behalf')">+ Add Held for Others</button>
+    <div class="sec"><div class="head"><h3>Held History</h3></div><div id="heldWindowList"></div></div>
+  </div>
+</div>
+
 <!-- Photo viewer -->
 <div id="photoModal" class="modal"><div class="sheet">
   <div class="drag"></div><h2>Receipt / Photo</h2>
@@ -325,7 +339,7 @@ function uid(){
 function saveData(){ localStorage.setItem(STORE_KEY, JSON.stringify(data)); render(); }
 function calcTokens(raw){
   raw=String(raw||"").replace(/\s+/g,"").replace(/[x×]/g,"*").replace(/÷/g,"/");
-  const num="(?:\\d+(?:\\.\\d*)?|\\.\\d+)";
+  const num="(?:\d+(?:\.\d*)?|\.\d+)";
   if(!raw || !new RegExp("^-?"+num+"(?:[+*/-]"+num+")*$").test(raw)) return null;
   const tokens=[];
   const first=raw.match(new RegExp("^-?"+num));
@@ -603,10 +617,10 @@ function mature(date=today()){ return Math.max(0, accountsTotal(date) - liabilit
 function calcHTML(id,label){
   return `<div class="calc"><div class="display"><small>${label}</small><b id="${id}Display">₨ 0</b><div id="${id}Preview" class="preview"></div></div>
   <div class="keys">
-    <button onclick="press('${id}','1')">1</button><button onclick="press('${id}','2')">2</button><button onclick="press('${id}','3')">3</button><button class="op" onclick="press('${id}','/')">÷</button>
-    <button onclick="press('${id}','4')">4</button><button onclick="press('${id}','5')">5</button><button onclick="press('${id}','6')">6</button><button class="op" onclick="press('${id}','*')">×</button>
-    <button onclick="press('${id}','7')">7</button><button onclick="press('${id}','8')">8</button><button onclick="press('${id}','9')">9</button><button class="op" onclick="press('${id}','-')">−</button>
-    <button class="clr" onclick="clearCalc('${id}')">C</button><button onclick="press('${id}','0')">0</button><button onclick="press('${id}','.')">.</button><button class="op" onclick="press('${id}','+')">+</button>
+    <button onclick="press('${id}','1')">1</button><button onclick="press('${id}','2')">2</button><button onclick="press('${id}','3')">3</button><button class="op" onclick="press('${id}','+')">+</button>
+    <button onclick="press('${id}','4')">4</button><button onclick="press('${id}','5')">5</button><button onclick="press('${id}','6')">6</button><button class="op" onclick="press('${id}','-')">−</button>
+    <button onclick="press('${id}','7')">7</button><button onclick="press('${id}','8')">8</button><button onclick="press('${id}','9')">9</button><button class="op" onclick="press('${id}','*')">×</button>
+    <button class="clr" onclick="clearCalc('${id}')">C</button><button onclick="press('${id}','0')">0</button><button onclick="press('${id}','.')">.</button><button class="op" onclick="press('${id}','/')">÷</button>
     <button onclick="backspace('${id}')">←</button><button class="eq" onclick="equalsCalc('${id}')">=</button>
   </div></div>`;
 }
@@ -657,6 +671,16 @@ entryCalc.innerHTML=calcHTML("entry","Amount");
 transferCalc.innerHTML=calcHTML("transfer","Amount");
 adjustCalc.innerHTML=calcHTML("adjust","Adjustment (+ / −)");
 
+function openHeldWindow(){
+  renderHeldWindow();
+  heldModal.style.display="flex";
+}
+function renderHeldWindow(){
+  const rows=mixedHistory().filter(x=>x.kind==="behalf");
+  heldWindowTotal.textContent=fmt(liabilityTotal());
+  heldWindowCount.textContent=String(rows.length);
+  heldWindowList.innerHTML=rows.length ? rows.map(historyRow).join("") : '<div class="empty">No Held for Others entries yet</div>';
+}
 /* ---------- Navigation ---------- */
 function go(id,index){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -665,7 +689,7 @@ function go(id,index){
   document.querySelectorAll(".nav button")[index].classList.add("active");
   if(id==="activity") renderHistory();
 }
-function closeModal(id){ document.getElementById(id).style.display="none"; if(id==="entryModal") entryType.disabled=false; editState={type:null,id:null}; }
+function closeModal(id){ document.getElementById(id).style.display="none"; if(id==="entryModal") entryType.disabled=false; if(id==="heldModal") renderHeldWindow(); editState={type:null,id:null}; }
 
 /* ---------- Unified Income / Expense / Behalf Entry ---------- */
 function openEntry(newMode){
@@ -990,6 +1014,7 @@ document.querySelectorAll(".chip").forEach(btn=>btn.addEventListener("click",()=
 
 /* ---------- Render ---------- */
 function render(){
+  if(typeof heldModal!=='undefined' && heldModal.style.display==='flex') renderHeldWindow();
   const at=accountsTotal(), liab=liabilityTotal(), mat=mature();
   homeMature.textContent=heroFmt(mat);homeTotalAccounts.textContent=heroFmt(at);
 
