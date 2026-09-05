@@ -16,49 +16,45 @@
   --green:#0b5f55;--green2:#0f7c6d;--soft:#eaf5f2;--red:#c94349;
   --amber:#a86b18;--violet:#6253b3;--shadow:0 10px 28px rgba(20,45,40,.06)
 }
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;width:100%;overflow-x:hidden}
-body{margin:0;width:100%;min-width:320px;max-width:100%;overflow-x:hidden;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+*{box-sizing:border-box} html,body,#root{overscroll-behavior-x:none} img,svg,video,canvas,iframe{max-width:100%;}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;width:100%;max-width:100%;overflow-x:hidden}
+body{margin:0;width:100%;min-width:0;max-width:100%;overflow-x:hidden;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
 button,input,select{font:inherit} input,select{font-size:16px!important}
 button{touch-action:manipulation}
-html,body{touch-action:pan-y;overscroll-behavior-x:none}
-.app,.modal,.sheet{touch-action:pan-y;overscroll-behavior-x:none}
-.modal{max-width:100vw}
-.sheet{max-width:560px;overflow-x:hidden;overscroll-behavior-x:none}
-.app{width:100%;max-width:560px;margin:auto;padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 94px)}
+.app{width:100%;max-width:560px;min-width:0;margin:auto;padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 94px)}
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .brand h1{font-size:24px;letter-spacing:-.5px;margin:0}.brand small,.muted{color:var(--muted);font-size:12px}
 .gear{width:42px;height:42px;border:1px solid var(--line);background:#fff;color:var(--green);border-radius:14px;font-size:18px}
 .hero{background:linear-gradient(145deg,#0b5f55,#084b45);color:#fff;border-radius:26px;padding:20px;box-shadow:0 16px 36px rgba(11,95,85,.18)}
 .hero small{opacity:.8}.hero .big{font-size:36px;font-weight:900;margin:4px 0 15px;letter-spacing:-1px}
-.heroGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini{background:rgba(255,255,255,.1);padding:12px;border-radius:15px}.mini b{display:block;font-size:17px;margin-top:4px}.miniHeld{width:100%;text-align:left;border:0;font:inherit;cursor:pointer}.miniHeld{background:#eaf5f2;color:#0b5f55}.miniHeld small{color:#4b7770;opacity:1}.miniHeld b{color:#0b5f55}
+.heroGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini{background:rgba(255,255,255,.1);padding:12px;border-radius:15px}.mini b{display:block;font-size:17px;margin-top:4px}
 .sec{margin-top:18px}.head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 10px}.head h3{font-size:15px;margin:0}
 .link{border:0;background:transparent;color:var(--green);font-weight:850;font-size:12px;padding:0}
 .card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:15px;box-shadow:var(--shadow)}.card small{color:var(--muted)}.card b{display:block;font-size:22px;margin-top:4px}
 .notice{background:linear-gradient(145deg,#fffaf1,#fff);border:1px solid #eee0c2;border-radius:20px;padding:15px;display:flex;justify-content:space-between;gap:12px;align-items:center}.notice small{color:var(--muted)}.notice b{display:block;font-size:21px;margin-top:4px}
-.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.quick button{border:1px solid var(--line);background:#fff;border-radius:17px;padding:11px 5px;font-size:11px;font-weight:850;min-width:0;line-height:1.15}.quick i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;margin:auto auto 6px;font-style:normal;font-size:18px}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.quick button{border:1px solid var(--line);background:#fff;border-radius:17px;padding:11px 5px;font-size:11px;font-weight:850}.quick i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;margin:auto auto 6px;font-style:normal;font-size:18px}
 .ig{background:#e7f7f1;color:#096a58}.ir{background:#fff0f0;color:#b83f43}.ia{background:#fff6e5;color:#996215}.iv{background:#f0eeff;color:#6252af}
 .screen{display:none}.screen.active{display:block}.title{font-size:27px;font-weight:900;letter-spacing:-.7px;margin:3px 2px}.sub{font-size:12px;color:var(--muted);margin:0 2px 14px}
 .balanceStrip{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}.balCard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px}.balCard small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.balCard b{display:block;font-size:15px;margin-top:3px}
-.filters{display:flex;gap:7px;overflow:auto;padding:1px 0 10px}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;white-space:nowrap;font-size:12px;font-weight:800}.chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+.filters{display:flex;flex-wrap:wrap;gap:7px;padding:1px 0 10px;min-width:0}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;white-space:nowrap;font-size:12px;font-weight:800}.chip.active{background:var(--green);color:#fff;border-color:var(--green)}
 .row{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 13px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;box-shadow:0 4px 14px rgba(30,50,42,.025)}
 .editable{cursor:pointer}.editable:active{transform:scale(.995)}
 .rowMain{min-width:0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex:1}.rowText{min-width:0}.rowText b{font-size:14px}.rowText small{display:block;color:var(--muted);font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis}.amt{font-weight:900;white-space:nowrap}.inc{color:var(--green2)}.exp{color:var(--red)}.loan{color:var(--amber)}.violet{color:var(--violet)}
 .actions{display:flex;gap:5px;align-items:center;flex-shrink:0}.tiny{border:1px solid #d6e5e1;background:var(--soft);border-radius:11px;padding:7px 9px;font-size:11px;font-weight:850;color:var(--green)}.tiny.red{color:var(--red);background:#fff2f2}
 .sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.sum{background:#fff;border:1px solid var(--line);border-radius:17px;padding:12px}.sum small{color:var(--muted)}.sum b{display:block;font-size:17px;margin-top:4px}
-.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(560px,100%);display:grid;grid-template-columns:repeat(5,1fr);background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 6px calc(env(safe-area-inset-bottom) + 8px);z-index:20}
+.nav{position:fixed;left:0;transform:none;bottom:0;width:100%;max-width:560px;right:0;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 6px calc(env(safe-area-inset-bottom) + 8px);z-index:20}
 .nav button{border:0;background:transparent;color:#7b8985;font-size:10px;font-weight:750;padding:7px 3px;border-radius:11px}.nav span{display:block;font-size:20px;line-height:21px}.nav .active{background:var(--soft);color:var(--green)}
-.modal{display:none;position:fixed;inset:0;background:rgba(10,25,22,.38);align-items:flex-end;justify-content:center;z-index:50;overflow:hidden}.sheet{width:100%;max-width:560px;min-width:0;background:#fff;border-radius:28px 28px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);max-height:92vh;overflow-x:hidden;overflow-y:auto}.drag{width:44px;height:5px;background:#dfe6e3;border-radius:99px;margin:0 auto 14px}.sheet h2{font-size:21px;margin:0 0 12px}
-.categoryQuick{display:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px;margin-top:8px;width:100%;min-width:0}.catQuick{border:1px solid var(--line);background:#f8faf9;color:#33433f;border-radius:12px;padding:9px 8px;font-size:11px;font-weight:800;text-align:left;line-height:1.2;min-width:0;overflow:hidden;white-space:normal;word-break:normal}.catQuick.active{background:var(--soft);border-color:#b9d8d1;color:var(--green)}.field{margin:11px 0}.field label{display:block;color:var(--muted);font-size:12px;font-weight:750;margin:0 0 6px 2px}input,select{width:100%;max-width:100%;border:1px solid var(--line);border-radius:15px;padding:13px 12px;background:#fff}
+.modal{display:none;position:fixed;inset:0;background:rgba(10,25,22,.38);align-items:flex-end;justify-content:center;z-index:50}.sheet{width:min(560px,100%);min-width:0;background:#fff;border-radius:28px 28px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);max-height:92vh;overflow:auto}.drag{width:44px;height:5px;background:#dfe6e3;border-radius:99px;margin:0 auto 14px}.sheet h2{font-size:21px;margin:0 0 12px}
+.field{margin:11px 0}.field label{display:block;color:var(--muted);font-size:12px;font-weight:750;margin:0 0 6px 2px}input,select{width:100%;max-width:100%;border:1px solid var(--line);border-radius:15px;padding:13px 12px;background:#fff}
 .btn{width:100%;border:0;border-radius:16px;padding:13px;font-size:15px;font-weight:850;margin-top:8px}.primary{background:var(--green);color:#fff}.secondary{background:#edf2f0;color:#34413e}.danger{background:#fff0f0;color:var(--red)}
-.calc{background:#f8faf9;border:1px solid var(--line);border-radius:20px;padding:12px;margin:10px 0}.display{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;text-align:right}.display small{color:var(--muted);font-size:11px}.display b{display:block;font-size:30px;margin-top:3px}.preview{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:12px;flex-wrap:wrap}.preview span{color:var(--muted)}.preview strong{color:var(--ink)}
-.keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px;width:100%;min-width:0}.keys button{min-width:0}.keys button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px 0;font-size:18px;font-weight:850}.keys .op{background:var(--soft);color:var(--green)}.keys .eq{grid-column:1 / -1;background:var(--green);color:#fff;border-color:var(--green)}.keys .clr{background:#fff2f2;color:var(--red)}
+.calc{background:#f8faf9;border:1px solid var(--line);border-radius:20px;padding:12px;margin:10px 0}.display{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;text-align:right;min-width:0;overflow:hidden}.display small{color:var(--muted);font-size:11px}.display b{display:block;font-size:30px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.calcExpression{color:var(--ink-soft);font-size:12px;font-weight:750;min-height:18px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.preview{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:12px;flex-wrap:wrap}.preview span{color:var(--muted)}.preview strong{color:var(--ink)}
+.keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.keys button,.opkeys button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px 0;font-size:18px;font-weight:850;min-width:0}.opkeys{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:8px}.opkeys .op{background:var(--soft);color:var(--green)}.opkeys .clr{background:#fff2f2;color:var(--red)}
 .toggle{appearance:none;width:44px;height:26px;border-radius:99px;background:#d7dfdc;position:relative}.toggle:checked{background:var(--green2)}.toggle:before{content:"";position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s}.toggle:checked:before{left:21px}
 .empty{text-align:center;padding:22px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:17px}
 .photoBox{background:#f8faf9;border:1px dashed #cfded9;border-radius:16px;padding:11px}.photoRow{display:flex;gap:8px;align-items:center}.photoRow input{padding:9px}.receiptTag{display:inline-flex;align-items:center;gap:4px;color:var(--violet);font-weight:850;font-size:11px}
 .photoPreview{display:none;width:100%;max-height:300px;object-fit:contain;border-radius:16px;background:#f2f5f4;margin-top:10px}
 .warn{background:#fff7e7;border:1px solid #efdcae;border-radius:16px;padding:10px 12px;font-size:12px;color:#7f5716;margin-bottom:12px}
-@media(max-width:380px){.app{padding-left:12px;padding-right:12px}.hero{padding:16px}.hero .big{font-size:31px}.heroGrid{gap:8px}.mini{padding:10px}.mini b{font-size:16px}.quick{gap:7px}.quick button{font-size:10px;padding:9px 3px}.quick i{width:31px;height:31px;font-size:17px}.balanceStrip{grid-template-columns:1fr 1fr}}
+@media(max-width:360px){.app{padding-left:12px;padding-right:12px}.hero .big{font-size:31px}.quick{grid-template-columns:repeat(3,1fr)}.balanceStrip{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -66,7 +62,7 @@ html,body{touch-action:pan-y;overscroll-behavior-x:none}
 
 <section id="home" class="screen active">
   <div class="top">
-    <div class="brand"><h1>Money Manager</h1><small>Every rupee has a trail</small></div>
+    <div class="brand"><h1>Money Manager</h1><small>Every rupee has a trail • v31</small></div>
     <button class="gear" onclick="go('accounts',4)">⚙</button>
   </div>
   <div class="hero">
@@ -74,12 +70,13 @@ html,body{touch-action:pan-y;overscroll-behavior-x:none}
     <div class="big" id="homeMature">Rs 0</div>
     <div class="heroGrid">
       <div class="mini"><small>Total Accounts</small><b id="homeTotalAccounts">Rs 0</b></div>
-      <button type="button" class="mini miniHeld" onclick="openHeldWindow()"><small>Held for Others</small><b id="homeLiabilities">Rs 0</b></button>
+      <div class="mini"><small>Held for Other's</small><b id="homeLiabilities">Rs 0</b></div>
     </div>
   </div>
 
-  <div class="sec homeAccountsLink">
+  <div class="sec">
     <div class="head"><h3>Accounts</h3><button class="link" onclick="go('accounts',4)">Manage</button></div>
+    <div class="card"><small>Total in Active Accounts</small><b id="homeAccountCard">Rs 0</b></div>
   </div>
 
   <div class="sec">
@@ -87,7 +84,7 @@ html,body{touch-action:pan-y;overscroll-behavior-x:none}
     <div class="quick">
       <button onclick="openEntry('income')"><i class="ig">＋</i>Income</button>
       <button onclick="openEntry('expense')"><i class="ir">−</i>Expense</button>
-      <button onclick="openEntry('behalf')"><i class="ia">±</i>Held for Others</button>
+      <button onclick="openEntry('behalf')"><i class="ia">±</i>Behalf of Other's</button>
       <button onclick="openTransfer()"><i class="ig">⇄</i>Transfer</button>
       <button onclick="openAdjust()"><i class="iv">↻</i>Adjust</button>
       <button onclick="go('activity',1)"><i class="iv">☷</i>History</button>
@@ -99,14 +96,14 @@ html,body{touch-action:pan-y;overscroll-behavior-x:none}
 
 <section id="activity" class="screen">
   <div class="title">History</div>
-  <div class="sub">Where money came from, where it went, and current account balances • Held for Others is tracked inside the normal History ledger</div>
-  <div id="legacyWarning" class="warn" style="display:none">Held for Others movements stay in the normal History trail and can be edited or deleted like other entries.</div>
+  <div class="sub">Where money came from, where it went, and current account balances • Every Behalf movement is an immutable ledger entry</div>
+  <div id="legacyWarning" class="warn" style="display:none">Older Behalf records are kept in the same History trail. Use a new opposite entry to correct any mistake; old entries are never silently rewritten.</div>
   <div id="historyBalances" class="balanceStrip"></div>
   <div class="filters">
     <button class="chip active" data-filter="all">All</button>
     <button class="chip" data-filter="income">Income</button>
     <button class="chip" data-filter="expense">Expense</button>
-    <button class="chip" data-filter="behalf">Held for Others</button>
+    <button class="chip" data-filter="behalf">Behalf of Other's</button>
     <button class="chip" data-filter="transfer">Transfer</button>
     <button class="chip" data-filter="adjust">Adjust</button>
   </div>
@@ -118,7 +115,7 @@ html,body{touch-action:pan-y;overscroll-behavior-x:none}
   <div class="sumgrid">
     <div class="sum"><small>Total Income</small><b id="reportIncome">₨ 0</b></div>
     <div class="sum"><small>Total Expense</small><b id="reportExpense">₨ 0</b></div>
-    <div class="sum"><small>Held for Others</small><b id="reportLiability">₨ 0</b></div>
+    <div class="sum"><small>Behalf of Other's</small><b id="reportLiability">₨ 0</b></div>
     <div class="sum"><small>Mature Today</small><b id="reportMature">₨ 0</b></div>
   </div>
   <div class="sec"><div class="head"><h3>Expense by Category</h3></div><div id="categoryReport"></div></div>
@@ -129,7 +126,7 @@ html,body{touch-action:pan-y;overscroll-behavior-x:none}
   <div class="field"><label>Date</label><input id="statusDate" type="date"></div>
   <div class="sumgrid">
     <div class="sum"><small>Total Accounts</small><b id="statusAccountsTotal">₨ 0</b></div>
-    <div class="sum"><small>Held for Others</small><b id="statusLiability">₨ 0</b></div>
+    <div class="sum"><small>Behalf of Other's</small><b id="statusLiability">₨ 0</b></div>
     <div class="sum"><small>Mature</small><b id="statusMature">₨ 0</b></div>
     <div class="sum"><small>Expenses</small><b id="statusExpenseTotal">₨ 0</b></div>
   </div>
@@ -155,36 +152,15 @@ html,body{touch-action:pan-y;overscroll-behavior-x:none}
   <button onclick="go('accounts',4)"><span>▣</span>Accounts</button>
 </div>
 
-<!-- Held for Others window -->
-<div id="heldModal" class="modal"><div class="sheet">
-  <div class="drag"></div><h2>Held for Others</h2>
-  <div class="sumgrid">
-    <div class="sum"><small>Total Held</small><b id="heldModalTotal">₨ 0</b></div>
-    <div class="sum"><small>Total Returned</small><b id="heldModalReturned">₨ 0</b></div>
-    <div class="sum"><small>Current Held</small><b id="heldModalCurrent">₨ 0</b></div>
-  </div>
-  <div class="quick" style="margin-top:10px">
-    <button onclick="openHeldAction('plus')"><i class="ig">＋</i>Receive / Hold</button>
-    <button onclick="openHeldAction('minus')"><i class="ir">−</i>Return / Release</button>
-  </div>
-  <div class="sec"><div class="head"><h3>Held History</h3></div><div id="heldModalList"></div></div>
-  <button class="btn secondary" onclick="closeModal('heldModal')">Close</button>
-</div></div>
-
 <!-- Income / Expense -->
 <div id="entryModal" class="modal"><div class="sheet">
   <div class="drag"></div><h2 id="entryTitle">Add Entry</h2>
   <div class="field"><label>Entry Type</label><select id="entryType" onchange="changeEntryType(this.value)">
-    <option value="income">Income</option><option value="expense">Expense</option><option value="behalf">Held for Others</option>
+    <option value="income">Income</option><option value="expense">Expense</option><option value="behalf">Behalf of Other's</option>
   </select></div>
-  <div class="field"><label>Account</label><select id="entryAccount"></select></div>
-  <div class="field"><label>Held Action</label><select id="behalfAction" onchange="changeBehalfAction(this.value)"><option value="plus">Receive / Hold</option><option value="minus">Return / Release</option></select></div>
-  <div class="field" id="entryCategoryWrap">
-    <label>Expense Category</label>
-    <select id="entryCategory"></select>
-  </div>
+  <div class="field"><label>Behalf Action</label><select id="behalfAction" onchange="changeBehalfAction(this.value)"><option value="plus">Receive / Add</option><option value="minus">Return / Reduce</option></select></div>
+  <div class="field" id="entryCategoryWrap"><label>Category</label><select id="entryCategory"></select></div>
   <div id="entryCalc"></div>
-  <div id="entryPreview" class="preview"></div>
   <div class="field"><label>Date</label><input id="entryDate" type="date"></div>
   <div class="field"><label>Note / Source / Purpose</label><input id="entryNote" placeholder="Optional"></div>
   <div class="field photoBox">
@@ -244,8 +220,18 @@ html,body{touch-action:pan-y;overscroll-behavior-x:none}
 <script>
 const INCOME_CATEGORIES = ["Salary", "Business Income", "Freelance Income", "Other Income"];
 const EXPENSE_CATEGORIES = ["Personal", "Mobile & Internet", "Utility Bills", "Parents / Family Support", "Grocery / Food / Dining", "Fuel / Transport / Travel", "Medical & Health", "Shopping / Entertainment", "Miscellaneous"];
+const CATEGORY_MIGRATION = {
+  "Personal":"Personal", "Mobile & Internet":"Mobile & Internet", "Utility Bills":"Utility Bills",
+  "Parents / Family Support":"Parents / Family Support", "Grocery":"Grocery / Food / Dining", "Dining / Food":"Grocery / Food / Dining",
+  "Grocery / Food / Dining":"Grocery / Food / Dining", "Fuel":"Fuel / Transport / Travel", "Transport":"Fuel / Transport / Travel",
+  "Travel":"Fuel / Transport / Travel", "Fuel / Transport / Travel":"Fuel / Transport / Travel", "Medical & Health":"Medical & Health",
+  "Shopping":"Shopping / Entertainment", "Entertainment":"Shopping / Entertainment", "Shopping / Entertainment":"Shopping / Entertainment",
+  "Education":"Miscellaneous", "Rent":"Miscellaneous", "Home Maintenance":"Miscellaneous", "Business Expenses":"Miscellaneous",
+  "Miscellaneous":"Miscellaneous"
+};
 const STORE_KEY = "moneyManagerV5";
-const SCHEMA_VERSION = 31;
+const SCHEMA_VERSION = 32;
+const REVIEW_ACCOUNT_ID = "__needs_account_review__";
 
 const initialData = {
   schemaVersion:SCHEMA_VERSION,
@@ -258,7 +244,15 @@ const initialData = {
   entries:[], liabilities:[], transfers:[], adjustments:[], others:[]
 };
 
-let data = JSON.parse(localStorage.getItem(STORE_KEY) || "null") || JSON.parse(JSON.stringify(initialData));
+let data = (()=>{
+  try{
+    const raw=localStorage.getItem(STORE_KEY);
+    return raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(initialData));
+  }catch(e){
+    console.warn("Stored data was unreadable; starting from a safe empty ledger.",e);
+    return JSON.parse(JSON.stringify(initialData));
+  }
+})();
 let mode = "income";
 let editState = {type:null,id:null};
 let historyFilter = "all";
@@ -273,48 +267,53 @@ function today(){
 function fmt(n){ return "₨ " + Number(n||0).toLocaleString("en-PK",{maximumFractionDigits:0}); }
 function heroFmt(n){ return "Rs " + Number(n||0).toLocaleString("en-PK",{maximumFractionDigits:0}); }
 function acc(id){ return data.accounts.find(a=>a.id===id); }
+function esc(v){ return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+function jsq(v){ return JSON.stringify(String(v??"")); }
 function uid(){
   if(window.crypto?.randomUUID) return window.crypto.randomUUID();
   return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2);
 }
-function saveData(){ localStorage.setItem(STORE_KEY, JSON.stringify(data)); render(); }
-function calcTokens(raw){
-  raw=String(raw||"").replace(/\s+/g,"").replace(/[x×]/g,"*");
-  const num="(?:\\d+(?:\\.\\d*)?|\\.\\d+)";
-  if(!raw || !new RegExp("^-?"+num+"(?:[+*-]"+num+")*$").test(raw)) return null;
-  const tokens=[];
-  const first=raw.match(new RegExp("^-?"+num));
-  if(!first) return null;
-  tokens.push(first[0]);
-  const rest=raw.slice(first[0].length);
-  const re=new RegExp("([+*-])("+num+")","g");
-  let m;
-  while((m=re.exec(rest))!==null) tokens.push(m[1],m[2]);
-  return tokens.length>1 && (tokens.length%2===1) || tokens.length===1 ? tokens : null;
+function saveData(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); render(); }
+  catch(e){ console.error("saveData failed",e); alert("Could not save the data. Please free some browser storage and try again."); }
 }
 function evalCalc(raw){
-  const tokens=calcTokens(raw);
-  if(!tokens) return 0;
-  let values=[Number(tokens[0])], ops=[];
-  for(let i=1;i<tokens.length;i+=2){
-    const op=tokens[i], n=Number(tokens[i+1]);
-    if(!Number.isFinite(n)) return 0;
-    if(op==="*") values[values.length-1]*=n;
-    else { ops.push(op); values.push(n); }
-  }
-  let total=values[0];
-  for(let i=0;i<ops.length;i++) total=ops[i]==="+" ? total+values[i+1] : total-values[i+1];
-  return Number.isFinite(total)?total:0;
-}
-function calcDisplayValue(raw){
-  raw=String(raw||"");
-  if(!raw) return 0;
-  const partial=/[+*-]$/.test(raw) ? raw.slice(0,-1) : raw;
-  return evalCalc(partial);
+  if(!raw || !/[0-9]/.test(raw) || !/^[0-9+\-*/. ]+$/.test(raw)) return 0;
+  let expr=String(raw).replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").trim();
+  // A trailing operator is only an in-progress expression; evaluate what is complete.
+  expr=expr.replace(/[+\-*/. ]+$/,(m)=>/[. ]/.test(m) && !/[+\-*/]/.test(m) ? m : "");
+  if(!expr || !/[0-9]/.test(expr)) return 0;
+  try{
+    const tokens=expr.match(/(?:\d+(?:\.\d*)?|\.\d+)|[+\-*/]/g);
+    if(!tokens || tokens.join("")!==expr.replace(/ /g,"")) return 0;
+    const nums=[]; const ops=[];
+    let expectNumber=true;
+    for(const t of tokens){
+      if(expectNumber){
+        if(t==="-"){ nums.push(0); ops.push("-"); continue; }
+        if(!/^\d*\.?\d+$/.test(t)) return 0;
+        nums.push(Number(t)); expectNumber=false;
+      }else{
+        if(!/^[+\-*/]$/.test(t)) return 0;
+        ops.push(t); expectNumber=true;
+      }
+    }
+    if(expectNumber) ops.pop();
+    // Standard precedence: × and ÷ before + and −.
+    for(let i=0;i<ops.length;){
+      if(ops[i]==="*" || ops[i]==="/"){
+        const a=nums[i], b=nums[i+1]; if(ops[i]==="/" && b===0) return 0;
+        nums.splice(i,2,ops[i]==="*"?a*b:a/b); ops.splice(i,1);
+      }else i++;
+    }
+    let result=nums[0]||0;
+    for(let i=0;i<ops.length;i++) result=ops[i]==="+"?result+nums[i+1]:result-nums[i+1];
+    return Number.isFinite(result)?result:0;
+  }catch{return 0;}
 }
 function activeAccounts(){ return data.accounts.filter(a=>a.active); }
 function activeOptions(selected=""){
-  return activeAccounts().map(a=>`<option value="${a.id}" ${a.id===selected?"selected":""}>${a.name}</option>`).join("");
+  return activeAccounts().map(a=>`<option value="${esc(a.id)}" ${a.id===selected?"selected":""}>${esc(a.name)}</option>`).join("");
 }
 
 
@@ -345,38 +344,31 @@ function auditAndRepairData(){
   });
 
   const accountIds=new Set(data.accounts.map(a=>a.id));
-  const beforeEntries=data.entries.length;
-  data.entries=data.entries.filter(e=>{
-    if(!e || !e.id || !accountIds.has(e.accountId)) { changed=true; return false; }
+  const fallbackId=accountIds.has(REVIEW_ACCOUNT_ID)?REVIEW_ACCOUNT_ID:ensureReviewAccount(); accountIds.add(fallbackId);
+  data.entries=data.entries.filter(e=>e && e.id).map(e=>{
+    if(!accountIds.has(e.accountId)){ e.accountId=fallbackId; e.needsAccountReview=true; changed=true; }
     e.amount=Math.abs(normalizeNumber(e.amount,0));
     e.date=/^\d{4}-\d{2}-\d{2}$/.test(e.date||"")?e.date:today();
     e.mode=["income","expense","behalf"].includes(e.mode)?e.mode:"expense";
+    if(e.mode==="expense") e.category=CATEGORY_MIGRATION[e.category]||"Miscellaneous";
     if(e.mode==="behalf") e.behalfDirection=e.behalfDirection==="minus"?"minus":"plus";
-    e.note=String(e.note||"");
-    e.created=e.created||new Date().toISOString();
-    return true;
-  });
-  if(beforeEntries!==data.entries.length) changed=true;
-
-  data.transfers=data.transfers.filter(t=>{
-    if(!t || !t.id || !accountIds.has(t.fromId) || !accountIds.has(t.toId) || t.fromId===t.toId){
-      changed=true; return false;
-    }
-    t.amount=Math.abs(normalizeNumber(t.amount,0));
-    t.date=/^\d{4}-\d{2}-\d{2}$/.test(t.date||"")?t.date:today();
-    t.note=String(t.note||"");
-    t.created=t.created||new Date().toISOString();
-    if(t.amount<=0){ changed=true; return false; }
-    return true;
+    e.note=String(e.note||""); e.created=e.created||new Date().toISOString();
+    return e;
   });
 
-  data.adjustments=data.adjustments.filter(a=>{
-    if(!a || !a.id || !accountIds.has(a.accountId)){ changed=true; return false; }
-    a.delta=normalizeNumber(a.delta,0);
-    a.date=/^\d{4}-\d{2}-\d{2}$/.test(a.date||"")?a.date:today();
-    a.note=String(a.note||"");
-    a.created=a.created||new Date().toISOString();
-    return true;
+  data.transfers=data.transfers.filter(t=>t && t.id).map(t=>{
+    if(!accountIds.has(t.fromId)){ t.fromId=fallbackId; t.needsAccountReview=true; changed=true; }
+    if(!accountIds.has(t.toId)){ t.toId=fallbackId; t.needsAccountReview=true; changed=true; }
+    t.amount=Math.abs(normalizeNumber(t.amount,0)); t.date=/^\d{4}-\d{2}-\d{2}$/.test(t.date||"")?t.date:today();
+    t.note=String(t.note||""); t.created=t.created||new Date().toISOString();
+    if(t.amount<=0){ t.amount=0; t.needsAccountReview=true; changed=true; }
+    return t;
+  }).filter(t=>t.fromId!==t.toId);
+
+  data.adjustments=data.adjustments.filter(a=>a && a.id).map(a=>{
+    if(!accountIds.has(a.accountId)){ a.accountId=fallbackId; a.needsAccountReview=true; changed=true; }
+    a.delta=normalizeNumber(a.delta,0); a.date=/^\d{4}-\d{2}-\d{2}$/.test(a.date||"")?a.date:today();
+    a.note=String(a.note||""); a.created=a.created||new Date().toISOString(); return a;
   });
 
   // Behalf is immutable and must never have an undefined direction.
@@ -417,6 +409,16 @@ function auditReport(){
 }
 
 /* ---------- Migration / audit repair ---------- */
+function ensureReviewAccount(){
+  let a=data.accounts.find(x=>x.id===REVIEW_ACCOUNT_ID);
+  if(!a){
+    a={id:REVIEW_ACCOUNT_ID,name:"Needs Account Review",type:"Review",active:true,opening:0};
+    data.accounts.push(a);
+  }else{
+    a.name="Needs Account Review"; a.type="Review"; a.active=true; a.opening=normalizeNumber(a.opening,0);
+  }
+  return a.id;
+}
 function migrateData(){
   data.accounts = Array.isArray(data.accounts) ? data.accounts : [];
   data.entries = Array.isArray(data.entries) ? data.entries : [];
@@ -427,52 +429,57 @@ function migrateData(){
 
   data.accounts.forEach(a=>{ if(a.name==="Main Bank") a.name="Bank"; });
 
-  // Merge older Behalf/Other/Loan records into the normal Entries ledger.
-  // Each Behalf movement is now one immutable entry: it changes the selected account
-  // and, at the same time, changes the outstanding Held-for-Others liability.
   if((data.schemaVersion||0) < 29){
     const legacyLiabilities = Array.isArray(data.liabilities) ? data.liabilities : [];
     const legacyOthers = Array.isArray(data.others) ? data.others : [];
     const legacyLoans = data.entries.filter(e=>e.mode==="loan");
-
+    const fallback=ensureReviewAccount();
     legacyLiabilities.forEach(l=>data.entries.push({
       id:l.id||uid(), mode:"behalf", behalfDirection:l.direction==="minus"?"minus":"plus",
-      accountId:l.accountId||"", category:"Held for Others", amount:Number(l.amount||0),
+      accountId:l.accountId||fallback, category:"Behalf of Other's", amount:Math.abs(Number(l.amount||0)),
       date:l.date||today(), note:l.note||"", created:l.created||new Date().toISOString(),
-      attachmentKey:l.attachmentKey||"", migrated:true
+      attachmentKey:l.attachmentKey||"", migrated:true, needsAccountReview:!l.accountId
     }));
-
     legacyOthers.forEach(o=>data.entries.push({
       id:o.id||uid(), mode:"behalf", behalfDirection:o.action==="received"?"plus":"minus",
-      accountId:o.accountId||"", category:"Held for Others", amount:Number(o.amount||0),
+      accountId:o.accountId||fallback, category:"Behalf of Other's", amount:Math.abs(Number(o.amount||0)),
       date:o.date||today(), note:o.note||"", created:o.created||new Date().toISOString(),
-      attachmentKey:o.attachmentKey||"", migrated:true
+      attachmentKey:o.attachmentKey||"", migrated:true, needsAccountReview:!o.accountId
     }));
-
     legacyLoans.forEach(e=>data.entries.push({
       id:e.id||uid(), mode:"behalf", behalfDirection:e.category==="Borrowed / Loan Received"?"plus":"minus",
-      accountId:e.accountId||"", category:"Held for Others", amount:Number(e.amount||0),
+      accountId:e.accountId||fallback, category:"Behalf of Other's", amount:Math.abs(Number(e.amount||0)),
       date:e.date||today(), note:e.note||(e.category==="Borrowed / Loan Received"?"Loan Received":"Loan Repayment"),
-      created:e.created||new Date().toISOString(), attachmentKey:e.attachmentKey||"", migrated:true
+      created:e.created||new Date().toISOString(), attachmentKey:e.attachmentKey||"", migrated:true, needsAccountReview:!e.accountId
     }));
-
     data.entries=data.entries.filter(e=>e.mode!=="loan");
-    data.others=[];
-    data.liabilities=[];
-    data.schemaVersion=29;
-    localStorage.setItem(STORE_KEY,JSON.stringify(data));
+    data.others=[]; data.liabilities=[]; data.schemaVersion=29;
   }
-  // Legacy collections are no longer part of the active accounting model.
-  // Keep them empty so the same transaction cannot be counted twice.
-  data.liabilities=[];
-  data.others=[];
-  // Keep opening balances immutable once an account already exists.
-  // No data rewrite is needed; the edit form below preserves the stored opening value.
-  // Final schema marker. No separate Behalf ledger remains.
-  if(data.schemaVersion !== SCHEMA_VERSION){
-    data.schemaVersion = SCHEMA_VERSION;
-    localStorage.setItem(STORE_KEY,JSON.stringify(data));
-  }
+
+  // Normalize the final nine-category system without losing historical amounts.
+  data.entries.forEach(e=>{
+    if(e.mode==="income") return;
+    if(e.mode==="expense") e.category=CATEGORY_MIGRATION[e.category] || "Miscellaneous";
+  });
+
+  // Preserve every historical record even if an older build stored a missing account ID.
+  const ids=new Set(data.accounts.map(a=>a.id));
+  let fallbackId=null;
+  const fallback=()=>fallbackId||(fallbackId=ensureReviewAccount());
+  data.entries.forEach(e=>{
+    if(!ids.has(e.accountId)){ e.accountId=fallback(); e.needsAccountReview=true; }
+  });
+  data.transfers.forEach(t=>{
+    if(!ids.has(t.fromId)){ t.fromId=fallback(); t.needsAccountReview=true; }
+    if(!ids.has(t.toId)){ t.toId=fallback(); t.needsAccountReview=true; }
+  });
+  data.adjustments.forEach(a=>{
+    if(!ids.has(a.accountId)){ a.accountId=fallback(); a.needsAccountReview=true; }
+  });
+
+  data.liabilities=[]; data.others=[];
+  data.schemaVersion=SCHEMA_VERSION;
+  try{ localStorage.setItem(STORE_KEY,JSON.stringify(data)); }catch(e){ console.error("Migration save failed",e); }
 }
 migrateData();
 auditAndRepairData();
@@ -515,13 +522,10 @@ async function viewCurrentEntryPhoto(){
 
 /* ---------- Accounting engine ---------- */
 function entryDelta(e){
-  const amount=Math.abs(Number(e.amount||0));
+  const amount=Number(e.amount||0);
   if(e.mode==="income") return amount;
   if(e.mode==="expense") return -amount;
-  // Held for Others is money that is ALREADY inside the selected account.
-  // Receiving/Holding it must NOT add money to the account again.
-  // Returning/Releasing it is an actual payment out of the account.
-  if(e.mode==="behalf") return e.behalfDirection==="plus" ? 0 : -amount;
+  if(e.mode==="behalf") return e.behalfDirection==="plus" ? amount : -amount;
   return 0;
 }
 function balance(accountId,date=today(),exclude=null){
@@ -537,64 +541,52 @@ function accountsTotal(date=today()){
   // Account balances are real balances whether an account is currently active or not.
   // Current UI totals only hide inactive accounts when their balance is zero (deactivation
   // is blocked for non-zero balances). Historical status therefore remains traceable.
-  return activeAccounts().reduce((s,a)=>s+balance(a.id,date),0);
+  return data.accounts.reduce((s,a)=>s+balance(a.id,date),0);
 }
 function liabilityTotal(date=today(),exclude=null){
   let v=0;
   data.entries.filter(e=>e.mode==="behalf" && e.date<=date && !(exclude?.type==="entry"&&e.id===exclude.id)).forEach(e=>v+=e.behalfDirection==="plus"?Number(e.amount||0):-Number(e.amount||0));
   return Math.max(0,v);
 }
-function mature(date=today()){ return Math.max(0, accountsTotal(date) - liabilityTotal(date)); }
+function mature(date=today()){ return accountsTotal(date) - liabilityTotal(date); }
 
 /* ---------- Calculator ---------- */
 function calcHTML(id,label){
-  return `<div class="calc"><div class="display"><small>${label}</small><b id="${id}Display">₨ 0</b><div id="${id}Preview" class="preview"></div></div>
+  return `<div class="calc"><div class="display"><small>${label}</small><div id="${id}Expression" class="calcExpression">Calculation: —</div><b id="${id}Display">₨ 0</b><div id="${id}Preview" class="preview"></div></div>
   <div class="keys">
-    <button onclick="press('${id}','7')">7</button><button onclick="press('${id}','8')">8</button><button onclick="press('${id}','9')">9</button><button class="clr" onclick="clearCalc('${id}')">C</button>
-    <button onclick="press('${id}','4')">4</button><button onclick="press('${id}','5')">5</button><button onclick="press('${id}','6')">6</button><button class="op" onclick="press('${id}','+')">+</button>
-    <button onclick="press('${id}','1')">1</button><button onclick="press('${id}','2')">2</button><button onclick="press('${id}','3')">3</button><button class="op" onclick="press('${id}','-')">−</button>
-    <button onclick="press('${id}','0')">0</button><button onclick="press('${id}','.')">.</button><button onclick="backspace('${id}')">⌫</button><button class="op" onclick="press('${id}','*')">×</button>
+    <button onclick="press('${id}','1')">1</button><button onclick="press('${id}','2')">2</button><button onclick="press('${id}','3')">3</button>
+    <button onclick="press('${id}','4')">4</button><button onclick="press('${id}','5')">5</button><button onclick="press('${id}','6')">6</button>
+    <button onclick="press('${id}','7')">7</button><button onclick="press('${id}','8')">8</button><button onclick="press('${id}','9')">9</button>
+    <button onclick="press('${id}','0')">0</button><button onclick="press('${id}','.')">.</button><button onclick="backspace('${id}')">←</button>
+  </div>
+  <div class="opkeys">
+    <button class="clr" onclick="clearCalc('${id}')">C</button>
+    <button class="op" onclick="press('${id}','+')">+</button>
+    <button class="op" onclick="press('${id}','-')">−</button>
+    <button class="op" onclick="press('${id}','*')">×</button>
+    <button class="op" onclick="press('${id}','/')">÷</button>
   </div></div>`;
 }
 function press(id,ch){
-  let raw=calc[id]||"";
-  const isOp=/[+\-*]/.test(ch);
-  if(isOp){
-    if(!raw){ if(ch==="-") raw="-"; else return; }
-    else if(/[+\-*]$/.test(raw)){ raw=raw.slice(0,-1)+ch; }
-    else raw+=ch;
+  const current=calc[id];
+  if(/[+\-*/]$/.test(current) && /[+\-*/]/.test(ch)){
+    calc[id]=current.slice(0,-1)+ch;
   }else if(ch==="."){
-    const part=raw.split(/[+\-*]/).pop();
+    const part=current.split(/[+\-*/]/).pop();
     if(part.includes(".")) return;
-    raw += part==="" ? "0." : ".";
+    calc[id]+=part?".":"0.";
   }else{
-    raw += ch;
+    calc[id]+=ch;
   }
-  calc[id]=raw; refreshCalc(id);
-}
-
-function equalsCalc(id){
-  const raw=calc[id]||"";
-  if(!raw || !/[+\-*]/.test(raw)) return;
-  const value=evalCalc(raw);
-  if(!Number.isFinite(value)) return;
-  calc[id]=String(value);
   refreshCalc(id);
 }
 function clearCalc(id){ calc[id]=""; refreshCalc(id); }
-function backspace(id){ calc[id]=(calc[id]||"").slice(0,-1); refreshCalc(id); }
-function calcExpression(raw){
-  return String(raw||"").replace(/([+\-*])/g," $1 ").replace(/\*/g,"×").replace(/(^| )-/g,"$1−");
-}
+function backspace(id){ calc[id]=calc[id].slice(0,-1); refreshCalc(id); }
 function refreshCalc(id){
-  const raw=calc[id]||"";
-  const val=calcDisplayValue(raw);
-  const el=document.getElementById(id+"Display");
-  const preview=document.getElementById(id+"Preview");
-  if(el)el.textContent=fmt(val);
-  if(preview){
-    preview.innerHTML=raw ? `<span>Calculation</span><strong>${calcExpression(raw)}</strong>` : "";
-  }
+  const raw=calc[id]; const val=evalCalc(raw);
+  const el=document.getElementById(id+"Display"); if(el)el.textContent=fmt(val);
+  const expression=document.getElementById(id+"Expression");
+  if(expression) expression.textContent=raw ? "Calculation: "+raw.replace(/\*/g," × ").replace(/\//g," ÷ ").replace(/-/g," − ").replace(/\+/g," + ") : "Calculation: —";
   if(id==="entry") refreshEntryPreview();
   if(id==="transfer") refreshTransferPreview();
   if(id==="adjust") refreshAdjustPreview();
@@ -620,7 +612,7 @@ function openEntry(newMode){
   if(newMode==="behalf") behalfAction.value="plus";
   entryDate.value=today(); entryNote.value=""; entryPhoto.value=""; calc.entry="";
   entryAccount.innerHTML=activeOptions();
-  entryCategory.innerHTML=(newMode==="expense"?EXPENSE_CATEGORIES:INCOME_CATEGORIES).map(c=>`<option>${c}</option>`).join("");
+  entryCategory.innerHTML=INCOME_CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
   changeEntryType(entryType.value); refreshCalc("entry"); entryModal.style.display="flex";
 }
 function changeEntryType(v){
@@ -628,80 +620,74 @@ function changeEntryType(v){
   const isBehalf=v==="behalf";
   entryCategoryWrap.style.display=isBehalf?"none":"block";
   behalfAction.parentElement.style.display=isBehalf?"block":"none";
-  entryTitle.textContent=isBehalf?(behalfAction.value==="minus"?"Return Held for Others":"Hold for Others"):(v==="income"?"Add Income":"Add Expense");
-  entryNote.placeholder=isBehalf?"Person / source / purpose":"Optional";
-  if(v==="expense"){
-    entryCategory.innerHTML=EXPENSE_CATEGORIES.map(c=>`<option>${c}</option>`).join("");
-
-  }else if(v==="income"){
-    entryCategory.innerHTML=INCOME_CATEGORIES.map(c=>`<option>${c}</option>`).join("");
-  }else{
-  }
+  entryTitle.textContent=isBehalf?(behalfAction.value==="minus"?"Return Behalf of Other's":"Receive Behalf of Other's"):(v==="income"?"Add Income":"Add Expense");
+  entryNote.placeholder=isBehalf?"Who / source / purpose":"Optional";
   refreshEntryPreview();
 }
 function changeBehalfAction(v){
   mode="behalf"; liabilityDirection=v;
-  entryTitle.textContent=v==="plus"?"Hold for Others":"Return Held for Others";
+  entryTitle.textContent=v==="plus"?"Receive Behalf of Other's":"Return Behalf of Other's";
   refreshEntryPreview();
 }
 function editEntry(id){
   const e=data.entries.find(x=>x.id===id); if(!e)return;
+  if(e.mode==="behalf") return; // Behalf records are immutable; correct with a new opposite entry.
   mode=e.mode; editState={type:"entry",id}; entryDeleteBtn.style.display="block"; entryViewPhoto.style.display=e.attachmentKey?"inline-flex":"none";
-  entryType.disabled=true; entryType.value=mode; behalfAction.value=e.behalfDirection||"plus"; liabilityDirection=behalfAction.value;
-  entryTitle.textContent=mode==="income"?"Edit Income":mode==="expense"?"Edit Expense":(behalfAction.value==="minus"?"Edit Return Held for Others":"Edit Held for Others");
-  entryCategoryWrap.style.display=mode==="behalf"?"none":"block"; behalfAction.parentElement.style.display=mode==="behalf"?"block":"none";
-  entryAccount.innerHTML=data.accounts.filter(a=>a.active||a.id===e.accountId).map(a=>`<option value="${a.id}">${a.name}</option>`).join("");
+  entryType.value=mode; entryType.disabled=true; behalfAction.value="plus";
+  entryTitle.textContent=mode==="income"?"Edit Income":"Edit Expense";
+  entryCategoryWrap.style.display="block"; behalfAction.parentElement.style.display="none";
+  entryAccount.innerHTML=data.accounts.filter(a=>a.active||a.id===e.accountId).map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join("");
   entryAccount.value=e.accountId;
-  entryCategory.innerHTML=(mode==="income"?INCOME_CATEGORIES:EXPENSE_CATEGORIES).map(c=>`<option ${c===e.category?"selected":""}>${c}</option>`).join("");
-
+  entryCategory.innerHTML=(mode==="income"?INCOME_CATEGORIES:EXPENSE_CATEGORIES).map(c=>`<option value="${esc(c)}" ${c===e.category?"selected":""}>${esc(c)}</option>`).join("");
   entryDate.value=e.date; entryNote.value=e.note||""; entryPhoto.value=""; calc.entry=String(e.amount); refreshCalc("entry"); entryModal.style.display="flex";
 }
 function refreshEntryPreview(){
   const p=entryPreview; if(!p)return; const amount=evalCalc(calc.entry), accountId=entryAccount.value, txDate=entryDate.value||today();
   if(!accountId){p.innerHTML='<span>Select an account</span>';return;}
-  const exclude=editState.type==="entry"?{type:"entry",id:editState.id}:null;
-  const before=balance(accountId,txDate,exclude);
-  if(mode==="income"){
-    const after=before+amount; p.innerHTML=`<span>Current ${fmt(before)}</span><span>After ${fmt(after)}</span>`;
-  }else if(mode==="expense"){
-    const after=before-amount; p.innerHTML=`<span>Current ${fmt(before)}</span><span>After ${fmt(after)}</span>`;
-  }else{
-    const held=liabilityTotal(txDate,exclude);
-    const afterHeld=liabilityDirection==="plus"?held+amount:held-amount;
-    const afterAccount=liabilityDirection==="plus"?before:before-amount;
-    const afterMature=afterAccount-afterHeld;
-    p.innerHTML=`<span>Account: ${fmt(before)} → ${fmt(afterAccount)}</span><span>Held: ${fmt(held)} → ${fmt(Math.max(0,afterHeld))}</span><span>Available: ${fmt(before-held)} → ${fmt(afterMature)}</span>`;
+  const before=balance(accountId,txDate,editState.type==="entry"?{type:"entry",id:editState.id}:null);
+  let after=before, detail="";
+  if(mode==="income") { after=before+amount; detail=`${fmt(before)} + ${fmt(amount)} = ${fmt(after)}`; }
+  else if(mode==="expense") { after=before-amount; detail=`${fmt(before)} − ${fmt(amount)} = ${fmt(after)}`; }
+  else {
+    const lb=liabilityTotal(txDate), la=liabilityDirection==="plus"?lb+amount:lb-amount;
+    after=liabilityDirection==="plus"?before+amount:before-amount;
+    detail=`<span><strong>Current Behalf: ${fmt(lb)}</strong></span><span><strong>${fmt(lb)} ${liabilityDirection==="plus"?"+":"−"} ${fmt(amount)} = ${fmt(la)}</strong></span><span>Account: ${fmt(before)} → ${fmt(after)} • Mature unchanged</span>`;
   }
+  p.innerHTML=detail;
 }
 async function saveEntry(){
-  const amount=Math.abs(evalCalc(calc.entry)); if(amount<=0)return alert("Enter amount."); if(!entryAccount.value)return alert("Select an account.");
-  const txDate=entryDate.value||today(); const isBehalf=mode==="behalf";
+  const amount=evalCalc(calc.entry); if(amount<=0)return alert("Enter amount."); if(!entryAccount.value)return alert("Select an account.");
+  const txDate=entryDate.value||today();
+  const isBehalf=mode==="behalf";
   const exclude=editState.type==="entry"?{type:"entry",id:editState.id}:null;
   const before=balance(entryAccount.value,txDate,exclude);
-  if(mode==="expense" && amount>before) return alert("This account does not have enough balance on this date.");
+  if((mode==="expense" || (isBehalf&&liabilityDirection==="minus")) && amount>before) return alert("This account does not have enough balance on this date.");
   if(isBehalf && liabilityDirection==="minus"){
     const outstanding=liabilityTotal(txDate,exclude);
-    if(amount>outstanding)return alert(`Return cannot exceed the Held for Others amount of ${heroFmt(outstanding)}.`);
-    if(amount>before)return alert("This account does not have enough balance to return this amount.");
+    if(amount>outstanding)return alert(`Return cannot exceed the outstanding Behalf amount of ${heroFmt(outstanding)}.`);
   }
   const old=editState.type==="entry"?data.entries.find(x=>x.id===editState.id):null;
   const id=old?.id||uid(); let attachmentKey=old?.attachmentKey||"";
   const file=entryPhoto.files?.[0];
   if(file){
     try{
-      const previousKey=attachmentKey; const blob=await compressImage(file); attachmentKey="entry-"+id;
-      await mediaPut(attachmentKey,blob); if(previousKey&&previousKey!==attachmentKey)await mediaDelete(previousKey);
-    }catch(e){return alert("Could not save photo. Try a smaller image.");}
+      const previousKey=attachmentKey;
+      const blob=await compressImage(file);
+      attachmentKey="entry-"+id;
+      await mediaPut(attachmentKey,blob);
+      if(previousKey && previousKey!==attachmentKey) await mediaDelete(previousKey);
+    }catch(e){ return alert("Could not save photo. Try a smaller image."); }
   }
-  const payload={id,mode,behalfDirection:isBehalf?liabilityDirection:undefined,accountId:entryAccount.value,category:isBehalf?"Held for Others":entryCategory.value,amount,date:txDate,note:entryNote.value.trim(),created:old?.created||new Date().toISOString(),attachmentKey};
-  if(old)data.entries=data.entries.map(x=>x.id===id?payload:x); else data.entries.push(payload);
+  const payload={id,mode,behalfDirection:isBehalf?liabilityDirection:undefined,accountId:entryAccount.value,category:isBehalf?"Behalf of Other's":(CATEGORY_MIGRATION[entryCategory.value]||"Miscellaneous"),amount,date:txDate,note:entryNote.value.trim(),created:old?.created||new Date().toISOString(),attachmentKey};
+  if(old) data.entries=data.entries.map(x=>x.id===id?payload:x); else data.entries.push(payload);
   const issues=auditReport();
   if(issues.length){
-    if(old)data.entries=data.entries.map(x=>x.id===id?old:x);else data.entries=data.entries.filter(x=>x.id!==id);
+    if(old) data.entries=data.entries.map(x=>x.id===id?old:x); else data.entries=data.entries.filter(x=>x.id!==id);
     return alert("Entry was not saved because the ledger failed an integrity check.\n\n"+issues.slice(0,5).join("\n"));
   }
   saveData(); closeModal("entryModal");
 }
+
 /* ---------- Transfer ---------- */
 function openTransfer(){
   if(activeAccounts().length<2)return alert("Activate at least two accounts.");
@@ -711,8 +697,8 @@ function openTransfer(){
 }
 function editTransfer(id){
   const t=data.transfers.find(x=>x.id===id);if(!t)return; editState={type:"transfer",id};transferDeleteBtn.style.display="block";transferTitle.textContent="Edit Transfer";
-  transferFrom.innerHTML=data.accounts.filter(a=>a.active||a.id===t.fromId).map(a=>`<option value="${a.id}">${a.name}</option>`).join("");
-  transferTo.innerHTML=data.accounts.filter(a=>a.active||a.id===t.toId).map(a=>`<option value="${a.id}">${a.name}</option>`).join("");
+  transferFrom.innerHTML=data.accounts.filter(a=>a.active||a.id===t.fromId).map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join("");
+  transferTo.innerHTML=data.accounts.filter(a=>a.active||a.id===t.toId).map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join("");
   transferFrom.value=t.fromId;transferTo.value=t.toId;transferDate.value=t.date;transferNote.value=t.note||"";calc.transfer=String(t.amount);refreshCalc("transfer");transferModal.style.display="flex";
 }
 function refreshTransferPreview(){
@@ -728,17 +714,20 @@ function saveTransfer(){
   const exclude=editState.type==="transfer"?{type:"transfer",id:editState.id}:null;if(amount>balance(transferFrom.value,txDate,exclude))return alert("Insufficient balance on the selected date.");
   const old=editState.type==="transfer"?data.transfers.find(x=>x.id===editState.id):null;
   const payload={id:old?.id||uid(),fromId:transferFrom.value,toId:transferTo.value,amount,date:transferDate.value||today(),note:transferNote.value.trim(),created:old?.created||new Date().toISOString()};
-  if(old)data.transfers=data.transfers.map(x=>x.id===old.id?payload:x);else data.transfers.push(payload);saveData();closeModal("transferModal");
+  if(old)data.transfers=data.transfers.map(x=>x.id===old.id?payload:x);else data.transfers.push(payload);
+  const issues=auditReport();
+  if(issues.length){ if(old)data.transfers=data.transfers.map(x=>x.id===old.id?old:x); else data.transfers=data.transfers.filter(x=>x.id!==payload.id); return alert("Transfer was not saved because the ledger failed an integrity check.\n\n"+issues.slice(0,5).join("\n")); }
+  saveData();closeModal("transferModal");
 }
 
 /* ---------- Adjust ---------- */
 function openAdjust(){
-  editState={type:null,id:null};adjustDeleteBtn.style.display="none";adjustAccount.innerHTML=data.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join("");
+  editState={type:null,id:null};adjustDeleteBtn.style.display="none";adjustAccount.innerHTML=data.accounts.map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join("");
   adjustDate.value=today();adjustNote.value="";calc.adjust="";refreshCalc("adjust");adjustModal.style.display="flex";
 }
 function editAdjust(id){
   const x=data.adjustments.find(a=>a.id===id);if(!x)return;editState={type:"adjust",id};adjustDeleteBtn.style.display="block";
-  adjustAccount.innerHTML=data.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join("");adjustAccount.value=x.accountId;adjustDate.value=x.date;adjustNote.value=x.note||"";calc.adjust=String(x.delta);refreshCalc("adjust");adjustModal.style.display="flex";
+  adjustAccount.innerHTML=data.accounts.map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join("");adjustAccount.value=x.accountId;adjustDate.value=x.date;adjustNote.value=x.note||"";calc.adjust=String(x.delta);refreshCalc("adjust");adjustModal.style.display="flex";
 }
 function refreshAdjustPreview(){
   const p=adjustPreview;if(!p)return;const id=adjustAccount.value,delta=evalCalc(calc.adjust);if(!id){p.innerHTML="";return;}
@@ -748,9 +737,13 @@ function refreshAdjustPreview(){
   p.innerHTML=`<span>Balance on ${txDate} <strong>${fmt(before)}</strong></span><span>After <strong>${fmt(before+delta)}</strong></span>`;
 }
 function saveAdjust(){
-  const delta=evalCalc(calc.adjust);if(!delta)return alert("Enter + or - adjustment.");const old=editState.type==="adjust"?data.adjustments.find(x=>x.id===editState.id):null;
+  const delta=evalCalc(calc.adjust);if(!delta)return alert("Enter + or - adjustment.");
+  if(!adjustAccount.value)return alert("Select an account.");const old=editState.type==="adjust"?data.adjustments.find(x=>x.id===editState.id):null;
   const payload={id:old?.id||uid(),accountId:adjustAccount.value,delta,date:adjustDate.value||today(),note:adjustNote.value.trim(),created:old?.created||new Date().toISOString()};
-  if(old)data.adjustments=data.adjustments.map(x=>x.id===old.id?payload:x);else data.adjustments.push(payload);saveData();closeModal("adjustModal");
+  if(old)data.adjustments=data.adjustments.map(x=>x.id===old.id?payload:x);else data.adjustments.push(payload);
+  const issues=auditReport();
+  if(issues.length){ if(old)data.adjustments=data.adjustments.map(x=>x.id===old.id?old:x); else data.adjustments=data.adjustments.filter(x=>x.id!==payload.id); return alert("Adjustment was not saved because the ledger failed an integrity check.\n\n"+issues.slice(0,5).join("\n")); }
+  saveData();closeModal("adjustModal");
 }
 
 /* ---------- Accounts ---------- */
@@ -872,28 +865,6 @@ async function deleteEditing(type){
   saveData();
 }
 
-function openHeldWindow(){
-  renderHeldWindow();
-  heldModal.style.display="flex";
-}
-function openHeldAction(direction){
-  closeModal("heldModal");
-  openEntry("behalf");
-  behalfAction.value=direction;
-  liabilityDirection=direction;
-  changeBehalfAction(direction);
-}
-function renderHeldWindow(){
-  const rows=data.entries.filter(e=>e.mode==="behalf").slice().sort((a,b)=>((b.date)+(b.created||"")).localeCompare((a.date)+(a.created||"")));
-  const held=liabilityTotal();
-  const received=rows.filter(e=>e.behalfDirection==="plus").reduce((s,e)=>s+Number(e.amount||0),0);
-  const returned=rows.filter(e=>e.behalfDirection==="minus").reduce((s,e)=>s+Number(e.amount||0),0);
-  heldModalTotal.textContent=fmt(received);
-  heldModalReturned.textContent=fmt(returned);
-  heldModalCurrent.textContent=fmt(held);
-  heldModalList.innerHTML=rows.length?rows.map(historyRow).join(""):"<div class=\"empty\">No Held for Others entries yet</div>";
-}
-
 /* ---------- History ---------- */
 function mixedHistory(){
   return [
@@ -911,13 +882,13 @@ function behalfRunningAfter(id){
 function historyRow(x){
   let title="",meta="",amount="",cls="",edit="",receipt="";
   if(x.kind==="income"||x.kind==="expense"){
-    const a=acc(x.accountId);title=x.category;meta=`${x.date} • ${a?.name||"Unknown"}${x.note?" • "+x.note:""}`;amount=(x.kind==="income"?"+":"−")+fmt(x.amount);cls=x.kind==="income"?"inc":"exp";edit=`editEntry(${JSON.stringify(x.id)})`;receipt=x.attachmentKey?`<button class="tiny" onclick="event.stopPropagation();showPhotoByKey('${x.attachmentKey}')">📎</button>`:"";
+    const a=acc(x.accountId);title=esc(x.category);meta=`${esc(x.date)} • ${esc(a?.name||"Unknown")}${x.note?" • "+esc(x.note):""}`;amount=(x.kind==="income"?"+":"−")+fmt(x.amount);cls=x.kind==="income"?"inc":"exp";edit=`editEntry(${jsq(x.id)})`;receipt=x.attachmentKey?`<button class="tiny" onclick="event.stopPropagation();showPhotoByKey(${jsq(x.attachmentKey)})">📎</button>`:"";
   }else if(x.kind==="behalf"){
-    const a=acc(x.accountId);const dir=x.behalfDirection==="plus";const running=behalfRunningAfter(x.id);title=`Held for Others — ${dir?"Held":"Returned"}`;meta=`${x.date} • ${a?.name||"⚠ Needs account"}${x.note?" • "+x.note:""} • Held after: ${fmt(running)}`;amount=(dir?"+":"−")+fmt(x.amount);cls="loan";edit=`editEntry(${JSON.stringify(x.id)})`;
+    const a=acc(x.accountId);const dir=x.behalfDirection==="plus";const running=behalfRunningAfter(x.id);title=`Behalf of Other's — ${dir?"Received":"Returned"}`;meta=`${esc(x.date)} • ${esc(a?.name||"⚠ Needs account")}${x.note?" • "+esc(x.note):""} • Held after: ${fmt(running)}`;amount=(dir?"+":"−")+fmt(x.amount);cls="loan";edit="";
   }else if(x.kind==="transfer"){
-    title="Transfer";meta=`${x.date} • ${acc(x.fromId)?.name||"?"} → ${acc(x.toId)?.name||"?"}${x.note?" • "+x.note:""}`;amount=fmt(x.amount);edit=`editTransfer(${JSON.stringify(x.id)})`;
+    title="Transfer";meta=`${esc(x.date)} • ${esc(acc(x.fromId)?.name||"?")} → ${esc(acc(x.toId)?.name||"?")}${x.note?" • "+esc(x.note):""}`;amount=fmt(x.amount);edit=`editTransfer(${jsq(x.id)})`;
   }else{
-    title="Balance Adjustment";meta=`${x.date} • ${acc(x.accountId)?.name||"?"}${x.note?" • "+x.note:""}`;amount=(x.delta>=0?"+":"−")+fmt(Math.abs(x.delta));cls=x.delta>=0?"inc":"exp";edit=`editAdjust(${JSON.stringify(x.id)})`;
+    title="Balance Adjustment";meta=`${esc(x.date)} • ${esc(acc(x.accountId)?.name||"?")}${x.note?" • "+esc(x.note):""}`;amount=(x.delta>=0?"+":"−")+fmt(Math.abs(x.delta));cls=x.delta>=0?"inc":"exp";edit=`editAdjust(${jsq(x.id)})`;
   }
   const editAttr=edit?`class="row editable" onclick="${edit}"`:`class="row"`;
   const editBtn=edit?`<button class="tiny" onclick="event.stopPropagation();${edit}">Edit</button>`:"";
@@ -925,7 +896,9 @@ function historyRow(x){
 }
 function renderHistory(){
   historyBalances.innerHTML=activeAccounts().map(a=>`<div class="balCard"><small>${a.name}</small><b>${fmt(balance(a.id))}</b></div>`).join("")||'<div class="empty">No active accounts</div>';
-  legacyWarning.style.display="none";
+  const reviewCount=[...data.entries,...data.transfers,...data.adjustments].filter(x=>x.needsAccountReview).length;
+  legacyWarning.style.display=reviewCount?"block":"none";
+  legacyWarning.innerHTML=reviewCount?`<strong>${reviewCount} record(s) need account review.</strong> Historical data was preserved in “Needs Account Review”. Move/adjust those records to the correct account before relying on those balances.`:"";
   const rows=mixedHistory().filter(x=>historyFilter==="all"||x.kind===historyFilter);
   activityList.innerHTML=rows.length?rows.map(historyRow).join(""):'<div class="empty">No matching history</div>';
 }
@@ -934,18 +907,18 @@ document.querySelectorAll(".chip").forEach(btn=>btn.addEventListener("click",()=
 /* ---------- Render ---------- */
 function render(){
   const at=accountsTotal(), liab=liabilityTotal(), mat=mature();
-  homeMature.textContent=heroFmt(mat);homeTotalAccounts.textContent=heroFmt(at);homeLiabilities.textContent=heroFmt(liab);
+  homeMature.textContent=heroFmt(mat);homeTotalAccounts.textContent=heroFmt(at);homeLiabilities.textContent=heroFmt(liab);homeAccountCard.textContent=heroFmt(at);homeLiabilityCard.textContent=heroFmt(liab);
 
   recentList.innerHTML=mixedHistory().slice(0,5).map(historyRow).join("")||'<div class="empty">No activity yet</div>';
 
-  accountList.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${a.name}</b><small>${a.type} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount('${a.id}')">Edit</button><button class="tiny" onclick="openAdjust();adjustAccount.value='${a.id}';refreshCalc('adjust')">Adjust</button><input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount('${a.id}',this.checked)"></div></div></div>`).join("");
+  accountList.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button><button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button><input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("");
   adjustmentList.innerHTML=data.adjustments.slice().sort((a,b)=>((b.date)+(b.created||"")).localeCompare((a.date)+(a.created||""))).map(historyRow).join("")||'<div class="empty">No adjustments yet</div>';
 
   let inc=0,exp=0,cats={};data.entries.forEach(e=>{if(e.mode==="income")inc+=Number(e.amount||0);else if(e.mode==="expense"){exp+=Number(e.amount||0);cats[e.category]=(cats[e.category]||0)+Number(e.amount||0);}});
   reportIncome.textContent=fmt(inc);reportExpense.textContent=fmt(exp);reportLiability.textContent=fmt(liab);reportMature.textContent=fmt(mat);
   categoryReport.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row"><div class="rowText"><b>${k}</b></div><div class="amt exp">${fmt(v)}</div></div>`).join("")||'<div class="empty">No expense data</div>';
 
-  renderStatus(); if(document.getElementById("activity").classList.contains("active"))renderHistory(); if(document.getElementById("heldModal")?.style.display==="flex")renderHeldWindow();
+  renderStatus(); if(document.getElementById("activity").classList.contains("active"))renderHistory();
 }
 function renderStatus(){
   const d=statusDate.value||today(), at=accountsTotal(d), liab=liabilityTotal(d), mat=mature(d);
@@ -963,11 +936,11 @@ adjustAccount.addEventListener("change",()=>refreshCalc("adjust"));
 
 render();
 
-/* Fresh PWA update */
+/* Fresh PWA update — schema/cache v32 */
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("sw.js",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js?v=32",{updateViaCache:"none"});
       await reg.update();
     }catch(e){}
   });
