@@ -101,7 +101,6 @@ button{touch-action:manipulation}
 <section id="activity" class="screen">
   <div class="title">History</div>
   <div class="sub">Where money came from, where it went, and current account balances • Every Behalf movement is an immutable ledger entry</div>
-  <div id="legacyWarning" class="warn" style="display:none">Older Behalf records are kept in the same History trail. Use a new opposite entry to correct any mistake; old entries are never silently rewritten.</div>
   <div id="historyBalances" class="balanceStrip"></div>
   <div class="filters">
     <button class="chip active" data-filter="all">All</button>
@@ -236,8 +235,7 @@ const CATEGORY_MIGRATION = {
   "Miscellaneous Personal":"Miscellaneous", "Miscellaneous":"Miscellaneous"
 };
 const STORE_KEY = "moneyManagerV5";
-const SCHEMA_VERSION = 36;
-const REVIEW_ACCOUNT_ID = "__needs_account_review__";
+const SCHEMA_VERSION = 39;
 
 const initialData = {
   schemaVersion:SCHEMA_VERSION,
@@ -351,6 +349,8 @@ function auditAndRepairData(){
   if(!Array.isArray(data.entries)){ data.entries=[]; changed=true; }
   if(!Array.isArray(data.transfers)){ data.transfers=[]; changed=true; }
   if(!Array.isArray(data.adjustments)){ data.adjustments=[]; changed=true; }
+  if(!Array.isArray(data.liabilities)){ data.liabilities=[]; changed=true; }
+  if(!Array.isArray(data.others)){ data.others=[]; changed=true; }
 
   const seen=new Set();
   data.accounts=data.accounts.filter(a=>{
@@ -365,46 +365,55 @@ function auditAndRepairData(){
     return true;
   });
 
+  // Remove the old synthetic "Needs Account Review" account. It was an internal
+  // fallback and must never appear as a real account head. Keep any affected records
+  // intact, but leave their accountId empty so the ledger does not invent an account.
+  const reviewId="__needs_account_review__";
+  if(data.accounts.some(a=>a.id===reviewId)){
+    data.entries.forEach(e=>{ if(e.accountId===reviewId){ e.accountId=""; e.needsAccountReview=true; changed=true; } });
+    data.transfers.forEach(t=>{
+      if(t.fromId===reviewId){ t.fromId=""; t.needsAccountReview=true; changed=true; }
+      if(t.toId===reviewId){ t.toId=""; t.needsAccountReview=true; changed=true; }
+    });
+    data.adjustments.forEach(a=>{ if(a.accountId===reviewId){ a.accountId=""; a.needsAccountReview=true; changed=true; } });
+    data.accounts=data.accounts.filter(a=>a.id!==reviewId);
+    changed=true;
+  }
+
   const accountIds=new Set(data.accounts.map(a=>a.id));
-  const fallbackId=accountIds.has(REVIEW_ACCOUNT_ID)?REVIEW_ACCOUNT_ID:ensureReviewAccount(); accountIds.add(fallbackId);
   data.entries=data.entries.filter(e=>e && e.id).map(e=>{
-    if(!accountIds.has(e.accountId)){ e.accountId=fallbackId; e.needsAccountReview=true; changed=true; }
-    e.amount=Math.abs(normalizeNumber(e.amount,0));
-    e.date=/^\d{4}-\d{2}-\d{2}$/.test(e.date||"")?e.date:today();
-    e.mode=["income","expense","behalf"].includes(e.mode)?e.mode:"expense";
-    if(e.mode==="expense") e.category=CATEGORY_MIGRATION[e.category]||"Miscellaneous";
+    if(!accountIds.has(e.accountId)){ e.accountId=""; e.needsAccountReview=true; changed=true; }
+    const oldAmount=e.amount; e.amount=Math.abs(normalizeNumber(e.amount,0)); if(e.amount!==oldAmount) changed=true;
+    const oldDate=e.date; e.date=/^\d{4}-\d{2}-\d{2}$/.test(e.date||"")?e.date:today(); if(e.date!==oldDate) changed=true;
+    const oldMode=e.mode; e.mode=["income","expense","behalf"].includes(e.mode)?e.mode:"expense"; if(e.mode!==oldMode) changed=true;
+    if(e.mode==="expense"){ const c=CATEGORY_MIGRATION[e.category]||"Miscellaneous"; if(e.category!==c){e.category=c;changed=true;} }
     if(e.mode==="behalf"){
-      e.behalfDirection=e.behalfDirection==="minus"?"minus":"plus";
-      if(!["included","new","out"].includes(e.accountEffect)) e.accountEffect=e.behalfDirection==="plus"?"included":"out";
-      if(e.behalfDirection==="minus") e.accountEffect="out";
+      const dir=e.behalfDirection==="minus"?"minus":"plus"; if(e.behalfDirection!==dir){e.behalfDirection=dir;changed=true;}
+      const effect=dir==="minus"?"out":(["included","new","out"].includes(e.accountEffect)?e.accountEffect:"included");
+      if(e.accountEffect!==effect){e.accountEffect=effect;changed=true;}
     }
     e.note=String(e.note||""); e.created=e.created||new Date().toISOString();
     return e;
   });
 
   data.transfers=data.transfers.filter(t=>t && t.id).map(t=>{
-    if(!accountIds.has(t.fromId)){ t.fromId=fallbackId; t.needsAccountReview=true; changed=true; }
-    if(!accountIds.has(t.toId)){ t.toId=fallbackId; t.needsAccountReview=true; changed=true; }
-    t.amount=Math.abs(normalizeNumber(t.amount,0)); t.date=/^\d{4}-\d{2}-\d{2}$/.test(t.date||"")?t.date:today();
+    if(!accountIds.has(t.fromId)){ t.fromId=""; t.needsAccountReview=true; changed=true; }
+    if(!accountIds.has(t.toId)){ t.toId=""; t.needsAccountReview=true; changed=true; }
+    t.amount=Math.abs(normalizeNumber(t.amount,0));
+    t.date=/^\d{4}-\d{2}-\d{2}$/.test(t.date||"")?t.date:today();
     t.note=String(t.note||""); t.created=t.created||new Date().toISOString();
-    if(t.amount<=0){ t.amount=0; t.needsAccountReview=true; changed=true; }
     return t;
-  }).filter(t=>t.fromId!==t.toId);
+  }).filter(t=>t.fromId && t.toId && t.fromId!==t.toId);
 
   data.adjustments=data.adjustments.filter(a=>a && a.id).map(a=>{
-    if(!accountIds.has(a.accountId)){ a.accountId=fallbackId; a.needsAccountReview=true; changed=true; }
+    if(!accountIds.has(a.accountId)){ a.accountId=""; a.needsAccountReview=true; changed=true; }
     a.delta=normalizeNumber(a.delta,0); a.date=/^\d{4}-\d{2}-\d{2}$/.test(a.date||"")?a.date:today();
     a.note=String(a.note||""); a.created=a.created||new Date().toISOString(); return a;
   });
 
-  // Behalf is immutable and must never have an undefined direction.
-  data.entries.forEach(e=>{
-    if(e.mode==="behalf" && !e.behalfDirection){
-      e.behalfDirection="plus"; changed=true;
-    }
-  });
-
-  if(changed) localStorage.setItem(STORE_KEY,JSON.stringify(data));
+  data.liabilities=[]; data.others=[];
+  if(data.schemaVersion!==SCHEMA_VERSION){ data.schemaVersion=SCHEMA_VERSION; changed=true; }
+  if(changed){ try{ localStorage.setItem(STORE_KEY,JSON.stringify(data)); }catch(e){ console.warn("Audit repair save failed",e); } }
   return changed;
 }
 
@@ -436,16 +445,6 @@ function auditReport(){
 }
 
 /* ---------- Migration / audit repair ---------- */
-function ensureReviewAccount(){
-  let a=data.accounts.find(x=>x.id===REVIEW_ACCOUNT_ID);
-  if(!a){
-    a={id:REVIEW_ACCOUNT_ID,name:"Needs Account Review",type:"Review",active:true,opening:0};
-    data.accounts.push(a);
-  }else{
-    a.name="Needs Account Review"; a.type="Review"; a.active=true; a.opening=normalizeNumber(a.opening,0);
-  }
-  return a.id;
-}
 function migrateData(){
   data.accounts = Array.isArray(data.accounts) ? data.accounts : [];
   data.entries = Array.isArray(data.entries) ? data.entries : [];
@@ -460,54 +459,36 @@ function migrateData(){
     const legacyLiabilities = Array.isArray(data.liabilities) ? data.liabilities : [];
     const legacyOthers = Array.isArray(data.others) ? data.others : [];
     const legacyLoans = data.entries.filter(e=>e.mode==="loan");
-    const fallback=ensureReviewAccount();
     legacyLiabilities.forEach(l=>data.entries.push({
       id:l.id||uid(), mode:"behalf", behalfDirection:l.direction==="minus"?"minus":"plus",
-      accountId:l.accountId||fallback, category:"Behalf of Other's", amount:Math.abs(Number(l.amount||0)),
+      accountId:l.accountId||"", category:"Behalf of Other's", amount:Math.abs(Number(l.amount||0)),
       date:l.date||today(), note:l.note||"", created:l.created||new Date().toISOString(),
       attachmentKey:l.attachmentKey||"", migrated:true, needsAccountReview:!l.accountId, accountEffect:l.direction==="minus"?"out":"included"
     }));
     legacyOthers.forEach(o=>data.entries.push({
       id:o.id||uid(), mode:"behalf", behalfDirection:o.action==="received"?"plus":"minus",
-      accountId:o.accountId||fallback, category:"Behalf of Other's", amount:Math.abs(Number(o.amount||0)),
+      accountId:o.accountId||"", category:"Behalf of Other's", amount:Math.abs(Number(o.amount||0)),
       date:o.date||today(), note:o.note||"", created:o.created||new Date().toISOString(),
       attachmentKey:o.attachmentKey||"", migrated:true, needsAccountReview:!o.accountId, accountEffect:o.action==="received"?"included":"out"
     }));
     legacyLoans.forEach(e=>data.entries.push({
       id:e.id||uid(), mode:"behalf", behalfDirection:e.category==="Borrowed / Loan Received"?"plus":"minus",
-      accountId:e.accountId||fallback, category:"Behalf of Other's", amount:Math.abs(Number(e.amount||0)),
+      accountId:e.accountId||"", category:"Behalf of Other's", amount:Math.abs(Number(e.amount||0)),
       date:e.date||today(), note:e.note||(e.category==="Borrowed / Loan Received"?"Loan Received":"Loan Repayment"),
-      created:e.created||new Date().toISOString(), attachmentKey:e.attachmentKey||"", migrated:true, needsAccountReview:!e.accountId, accountEffect:e.category==="Borrowed / Loan Received"?"included":"out"
+      created:e.created||new Date().toISOString(), attachmentKey:e.attachmentKey||"", migrated:true,
+      needsAccountReview:!e.accountId, accountEffect:e.category==="Borrowed / Loan Received"?"included":"out"
     }));
     data.entries=data.entries.filter(e=>e.mode!=="loan");
     data.others=[]; data.liabilities=[]; data.schemaVersion=29;
   }
 
-  // Normalize the final nine-category system without losing historical amounts.
   data.entries.forEach(e=>{
-    if(e.mode==="income") return;
     if(e.mode==="expense") e.category=CATEGORY_MIGRATION[e.category] || "Miscellaneous";
   });
-
-  // Preserve every historical record even if an older build stored a missing account ID.
-  const ids=new Set(data.accounts.map(a=>a.id));
-  let fallbackId=null;
-  const fallback=()=>fallbackId||(fallbackId=ensureReviewAccount());
-  data.entries.forEach(e=>{
-    if(!ids.has(e.accountId)){ e.accountId=fallback(); e.needsAccountReview=true; }
-  });
-  data.transfers.forEach(t=>{
-    if(!ids.has(t.fromId)){ t.fromId=fallback(); t.needsAccountReview=true; }
-    if(!ids.has(t.toId)){ t.toId=fallback(); t.needsAccountReview=true; }
-  });
-  data.adjustments.forEach(a=>{
-    if(!ids.has(a.accountId)){ a.accountId=fallback(); a.needsAccountReview=true; }
-  });
-
-  data.liabilities=[]; data.others=[];
   data.schemaVersion=SCHEMA_VERSION;
   try{ localStorage.setItem(STORE_KEY,JSON.stringify(data)); }catch(e){ console.error("Migration save failed",e); }
 }
+
 migrateData();
 auditAndRepairData();
 
@@ -823,13 +804,22 @@ function saveAccount(){
   if(!Number.isFinite(openingValue)){ alert("Enter a valid opening balance."); openingEl?.focus(); return; }
 
   const old=editState.type==="account" ? acc(editState.id) : null;
+  const duplicate=data.accounts.find(a=>a.id!==(old?.id||"") && String(a.name||"").trim().toLowerCase()===accountNameValue.toLowerCase());
+  if(duplicate){ alert(`An account named “${duplicate.name}” already exists. Use that account instead of creating a duplicate.`); nameEl?.focus(); return; }
   const previous=JSON.parse(JSON.stringify(data));
+  const newActive=(activeEl?.value||"true")==="true";
+  // Never allow an account carrying money to be made inactive from the Edit modal.
+  // The same protection exists in toggleAccount(); keep both paths consistent.
+  if(old && !newActive && Math.abs(balance(old.id))>0.000001){
+    alert("This account still has a balance. Transfer/adjust it to Rs 0 before making the account inactive.");
+    return;
+  }
   const payload={
     id:old?.id||uid(),
     name:accountNameValue,
     type:typeEl?.value||"Cash",
     opening:old ? Number(old.opening||0) : openingValue,
-    active:(activeEl?.value||"true")==="true"
+    active:newActive
   };
 
   if(old) data.accounts=data.accounts.map(x=>x.id===old.id?payload:x);
@@ -857,8 +847,16 @@ function toggleAccount(id,active){
     render();
     return;
   }
+  const previous=a.active;
   a.active=!!active;
-  localStorage.setItem(STORE_KEY,JSON.stringify(data));
+  try{
+    localStorage.setItem(STORE_KEY,JSON.stringify(data));
+  }catch(e){
+    a.active=previous;
+    alert("Could not save the account status. Please free some browser storage and try again.");
+    render();
+    return;
+  }
   render();
 }
 
@@ -1027,7 +1025,7 @@ function historyRow(x){
   if(x.kind==="income"||x.kind==="expense"){
     const a=acc(x.accountId);title=esc(x.category);meta=`${esc(x.date)} • ${esc(a?.name||"Unknown")}${x.note?" • "+esc(x.note):""}`;amount=(x.kind==="income"?"+":"−")+fmt(x.amount);cls=x.kind==="income"?"inc":"exp";edit=`editEntry(${jsq(x.id)})`;receipt=x.attachmentKey?`<button class="tiny" onclick="event.stopPropagation();showPhotoByKey(${jsq(x.attachmentKey)})">📎</button>`:"";
   }else if(x.kind==="behalf"){
-    const a=acc(x.accountId);const dir=x.behalfDirection==="plus";const running=behalfRunningAfter(x.id);title=`Behalf of Other's — ${dir?"Received":"Returned"}`;meta=`${esc(x.date)} • ${esc(a?.name||"⚠ Needs account")}${x.note?" • "+esc(x.note):""} • Held after: ${fmt(running)}`;amount=(dir?"+":"−")+fmt(x.amount);cls="loan";edit="";
+    const a=acc(x.accountId);const dir=x.behalfDirection==="plus";const running=behalfRunningAfter(x.id);title=`Behalf of Other's — ${dir?"Received":"Returned"}`;meta=`${esc(x.date)} • ${esc(a?.name||"Unlinked account")}${x.note?" • "+esc(x.note):""} • Held after: ${fmt(running)}`;amount=(dir?"+":"−")+fmt(x.amount);cls="loan";edit="";
   }else if(x.kind==="transfer"){
     title="Transfer";meta=`${esc(x.date)} • ${esc(acc(x.fromId)?.name||"?")} → ${esc(acc(x.toId)?.name||"?")}${x.note?" • "+esc(x.note):""}`;amount=fmt(x.amount);edit=`editTransfer(${jsq(x.id)})`;
   }else{
@@ -1038,12 +1036,13 @@ function historyRow(x){
   return `<div ${editAttr}><div class="rowMain"><div class="rowText"><b>${title}</b><small>${meta}</small></div><div class="amt ${cls}">${amount}</div></div><div class="actions">${receipt}${editBtn}</div></div>`;
 }
 function renderHistory(){
-  historyBalances.innerHTML=activeAccounts().map(a=>`<div class="balCard"><small>${a.name}</small><b>${fmt(balance(a.id))}</b></div>`).join("")||'<div class="empty">No active accounts</div>';
-  const reviewCount=[...data.entries,...data.transfers,...data.adjustments].filter(x=>x.needsAccountReview).length;
-  legacyWarning.style.display=reviewCount?"block":"none";
-  legacyWarning.innerHTML=reviewCount?`<strong>${reviewCount} record(s) need account review.</strong> Historical data was preserved in “Needs Account Review”. Move/adjust those records to the correct account before relying on those balances.`:"";
+  const historyBalancesEl=document.getElementById("historyBalances");
+  const activityListEl=document.getElementById("activityList");
+  if(historyBalancesEl) historyBalancesEl.innerHTML=activeAccounts().map(a=>`<div class="balCard"><small>${a.name}</small><b>${fmt(balance(a.id))}</b></div>`).join("")||'<div class="empty">No active accounts</div>';
+  const legacyWarningEl=document.getElementById("legacyWarning");
+  if(legacyWarningEl) legacyWarningEl.style.display="none";
   const rows=mixedHistory().filter(x=>historyFilter==="all"||x.kind===historyFilter);
-  activityList.innerHTML=rows.length?rows.map(historyRow).join(""):'<div class="empty">No matching history</div>';
+  if(activityListEl) activityListEl.innerHTML=rows.length?rows.map(historyRow).join(""):'<div class="empty">No matching history</div>';
 }
 document.querySelectorAll(".chip").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".chip").forEach(b=>b.classList.remove("active"));btn.classList.add("active");historyFilter=btn.dataset.filter;renderHistory();}));
 
@@ -1054,8 +1053,10 @@ function render(){
 
   recentList.innerHTML=mixedHistory().slice(0,5).map(historyRow).join("")||'<div class="empty">No activity yet</div>';
 
-  accountList.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button><button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button><input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("") || `<div class="empty">No account heads found. tap + Add to create one.</div>`;
-  adjustmentList.innerHTML=data.adjustments.slice().sort((a,b)=>((b.date)+(b.created||"")).localeCompare((a.date)+(a.created||""))).map(historyRow).join("")||'<div class="empty">No adjustments yet</div>';
+  const accountListEl=document.getElementById("accountList");
+  const adjustmentListEl=document.getElementById("adjustmentList");
+  if(accountListEl) accountListEl.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button><button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button><input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("") || `<div class="empty">No account heads found. tap + Add to create one.</div>`;
+  if(adjustmentListEl) adjustmentListEl.innerHTML=data.adjustments.slice().sort((a,b)=>((b.date)+(b.created||"")).localeCompare((a.date)+(a.created||""))).map(historyRow).join("")||'<div class="empty">No adjustments yet</div>';
 
   let inc=0,exp=0,cats={};data.entries.forEach(e=>{if(e.mode==="income")inc+=Number(e.amount||0);else if(e.mode==="expense"){exp+=Number(e.amount||0);cats[e.category]=(cats[e.category]||0)+Number(e.amount||0);}});
   reportIncome.textContent=fmt(inc);reportExpense.textContent=fmt(exp);reportLiability.textContent=fmt(liab);reportMature.textContent=fmt(mat);
@@ -1087,11 +1088,11 @@ if(summaryFromEl&&summaryToEl){
   renderMonthSummary();
 }
 
-/* Fresh PWA update — schema/cache v36 */
+/* Fresh PWA update — schema/cache v39 */
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("sw.js?v=36",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js?v=39",{updateViaCache:"none"});
       await reg.update();
     }catch(e){}
   });
