@@ -54,6 +54,9 @@ button{touch-action:manipulation}
 .photoBox{background:#f8faf9;border:1px dashed #cfded9;border-radius:16px;padding:11px}.photoRow{display:flex;gap:8px;align-items:center}.photoRow input{padding:9px}.receiptTag{display:inline-flex;align-items:center;gap:4px;color:var(--violet);font-weight:850;font-size:11px}
 .photoPreview{display:none;width:100%;max-height:300px;object-fit:contain;border-radius:16px;background:#f2f5f4;margin-top:10px}
 .warn{background:#fff7e7;border:1px solid #efdcae;border-radius:16px;padding:10px 12px;font-size:12px;color:#7f5716;margin-bottom:12px}
+
+.summaryPage{max-width:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.summaryTop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}.summaryTop .eyebrow{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}.summaryTop h2{font-size:24px;line-height:1.05;margin:3px 0 0;letter-spacing:-.035em}.summaryPeriod{font-size:11px;color:var(--muted);text-align:right;white-space:nowrap}.summaryHero{background:linear-gradient(135deg,#073f3a 0%,#0b5f55 55%,#14756a 100%);color:#fff;border-radius:24px;padding:18px;box-shadow:0 12px 28px rgba(7,63,58,.16);margin-bottom:12px}.summaryHero .heroLabel{font-size:11px;opacity:.78;font-weight:750;text-transform:uppercase;letter-spacing:.06em}.summaryHero .heroValue{display:block;font-size:32px;line-height:1.05;font-weight:900;letter-spacing:-.045em;margin:5px 0 3px}.summaryHero .heroSub{font-size:11px;opacity:.82}.summaryBalance{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}.summaryBalanceCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;box-shadow:0 4px 14px rgba(20,40,35,.04)}.summaryBalanceCard small{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.summaryBalanceCard b{display:block;font-size:19px;line-height:1.15;margin-top:5px;letter-spacing:-.02em}.summaryBalanceCard .date{font-size:10px;color:var(--muted);margin-top:4px}.summaryGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}.summaryMetric{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px}.summaryMetric small{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.summaryMetric b{display:block;font-size:18px;margin-top:5px}.summarySection{background:#fff;border:1px solid var(--line);border-radius:20px;padding:13px}.summarySection .head{margin-bottom:9px}.summarySection .head h3{font-size:14px}.summaryRow{padding:9px 2px;display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #edf1ef}.summaryRow:last-of-type{border-bottom:0}.summaryRow b{font-size:12px}.summaryRow .amt{font-size:12px}.summaryNote{font-size:10px;color:var(--muted);margin-top:10px;line-height:1.45}.summaryEmpty{padding:13px;text-align:center;color:var(--muted);background:#f8faf9;border:1px dashed var(--line);border-radius:14px;font-size:12px}
+
 @media(max-width:360px){.app{padding-left:12px;padding-right:12px}.hero .big{font-size:31px}.quick{grid-template-columns:repeat(3,1fr)}.balanceStrip{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -88,6 +91,7 @@ button{touch-action:manipulation}
       <button onclick="openTransfer()"><i class="ig">⇄</i>Transfer</button>
       <button onclick="openAdjust()"><i class="iv">↻</i>Adjust</button>
       <button onclick="go('activity',1)"><i class="iv">☷</i>History</button>
+      <button onclick="go('reports',2);renderMonthSummary()"><i class="iv">▤</i>Month Summary</button>
     </div>
   </div>
 
@@ -111,14 +115,14 @@ button{touch-action:manipulation}
 </section>
 
 <section id="reports" class="screen">
-  <div class="title">Reports</div><div class="sub">All-time summary and expense categories</div>
-  <div class="sumgrid">
-    <div class="sum"><small>Total Income</small><b id="reportIncome">₨ 0</b></div>
-    <div class="sum"><small>Total Expense</small><b id="reportExpense">₨ 0</b></div>
-    <div class="sum"><small>Behalf of Other's</small><b id="reportLiability">₨ 0</b></div>
-    <div class="sum"><small>Mature Today</small><b id="reportMature">₨ 0</b></div>
+  <div class="title">Month-End Summary</div>
+  <div class="sub">Your income and main expenses for the selected month. Behalf of Other's money is not included.</div>
+  <div class="card">
+    <div class="field"><label>From Date</label><input id="summaryFromDate" type="date"></div>
+    <div class="field"><label>To Date</label><input id="summaryToDate" type="date"></div>
+    <button class="btn primary" onclick="renderMonthSummary()">Generate Summary</button>
   </div>
-  <div class="sec"><div class="head"><h3>Expense by Category</h3></div><div id="categoryReport"></div></div>
+  <div id="monthSummary" class="sec"></div>
 </section>
 
 <section id="status" class="screen">
@@ -141,7 +145,7 @@ button{touch-action:manipulation}
   </div>
   <div id="accountList"></div>
   <div class="sec"><div class="head"><h3>Adjustment History</h3></div><div id="adjustmentList"></div></div>
-  <div class="sec"><div class="head"><h3>Data Safety</h3></div><div class="card"><small>Keep a personal backup before major updates or device changes.</small><button class="btn primary" onclick="exportBackup()">Download Backup</button><button class="btn secondary" onclick="document.getElementById('restoreFile').click()">Restore Backup</button><input id="restoreFile" type="file" accept="application/json" style="display:none" onchange="importBackup(this.files[0])"></div></div>
+  <div class="sec"><div class="head"><h3>Data Safety</h3></div><div class="card"><small>Clean all transaction history while keeping active account balances as new starting balances.</small><button class="btn danger" onclick="cleanHistory()">Clean History</button></div></div>
 </section>
 </div>
 
@@ -232,7 +236,7 @@ const CATEGORY_MIGRATION = {
   "Miscellaneous Personal":"Miscellaneous", "Miscellaneous":"Miscellaneous"
 };
 const STORE_KEY = "moneyManagerV5";
-const SCHEMA_VERSION = 32;
+const SCHEMA_VERSION = 36;
 const REVIEW_ACCOUNT_ID = "__needs_account_review__";
 
 const initialData = {
@@ -255,11 +259,11 @@ let data = (()=>{
     return JSON.parse(JSON.stringify(initialData));
   }
 })();
-/* v32 safety backup: preserve the last stored ledger before any migration/repair. */
+/* Safety backup: preserve the last stored ledger before any migration/repair. */
 try{
   const existing=localStorage.getItem(STORE_KEY);
-  if(existing && !localStorage.getItem(STORE_KEY+"_pre_v32_backup")){
-    localStorage.setItem(STORE_KEY+"_pre_v32_backup",existing);
+  if(existing && !localStorage.getItem(STORE_KEY+"_pre_migration_backup")){
+    localStorage.setItem(STORE_KEY+"_pre_migration_backup",existing);
   }
 }catch(e){ console.warn("Pre-v32 backup could not be created",e); }
 
@@ -877,55 +881,132 @@ async function deleteEditing(type){
   saveData();
 }
 
-/* ---------- Backup / Restore ---------- */
-function exportBackup(){
+/* ---------- Backup / Clean History ---------- */
+/* ---------- Clean History / Month Summary ---------- */
+function cleanHistory(){
+  if(!confirm("Clean all transaction history? Active account balances will be kept as new starting balances.")) return;
+  if(!confirm("This will permanently remove all Income, Expense, Behalf, Transfer and Adjustment history from this browser. Continue?")) return;
   try{
-    const payload={app:"Money Manager",version:SCHEMA_VERSION,exportedAt:new Date().toISOString(),data:data};
-    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
-    const url=URL.createObjectURL(blob); const a=document.createElement("a");
-    a.href=url; a.download=`money-manager-backup-${today()}.json`;
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-  }catch(err){ console.error("exportBackup",err); alert("Backup could not be created."); }
-}
-async function importBackup(file){
-  if(!file)return;
-  try{
-    const parsed=JSON.parse(await file.text());
-    const incoming=parsed?.data||parsed?.ledger||parsed;
-    if(!incoming || !Array.isArray(incoming.accounts)||!Array.isArray(incoming.entries)||!Array.isArray(incoming.transfers)||!Array.isArray(incoming.adjustments)){
-      throw new Error("Invalid backup structure");
-    }
-    if(!incoming.accounts.length){
-      throw new Error("This backup contains no account heads. The existing accounts were not replaced.");
-    }
-    if(!confirm("Restore this backup? Your current ledger will be replaced. Export the current ledger first if needed.")) return;
-
     const previous=JSON.parse(JSON.stringify(data));
-    const candidate=JSON.parse(JSON.stringify(incoming));
-    data=candidate;
-    migrateData();
-    auditAndRepairData();
-    const issues=auditReport();
-    if(issues.length){
-      data=previous;
-      saveData();
-      throw new Error(issues.slice(0,5).join("; "));
-    }
+    data.accounts=data.accounts.map(a=>{
+      if(a.active){
+        return {...a,opening:Number(balance(a.id)||0)};
+      }
+      return {...a};
+    });
+    data.entries=[]; data.transfers=[]; data.adjustments=[]; data.liabilities=[]; data.others=[];
     data.schemaVersion=SCHEMA_VERSION;
-    if(!saveData()){
+    if(!saveData()) {
       data=previous;
-      saveData();
-      throw new Error("The restored data could not be saved to this browser.");
+      try{ localStorage.setItem(STORE_KEY,JSON.stringify(data)); }catch(e){}
+      throw new Error("Could not save the cleaned ledger.");
     }
-    alert("Backup restored successfully. Accounts, balances and history have been restored.");
-    try{ render(); }catch(err){ console.error("Render after restore failed",err); }
+    alert("History cleaned successfully. Active account balances are now the new starting balances.");
+    render();
   }catch(err){
-    console.error("importBackup",err);
-    alert("Backup could not be restored. No valid changes were applied.\n\n"+(err.message||"Invalid file."));
-  }finally{
-    const input=document.getElementById("restoreFile"); if(input) input.value="";
+    console.error("cleanHistory",err);
+    alert("History could not be cleaned. No valid changes were applied.");
   }
 }
+function monthName(value){
+  if(!value) return "Selected Period";
+  const [y,m]=value.split("-").map(Number);
+  return new Date(y,m-1,1).toLocaleDateString("en-PK",{month:"long",year:"numeric"});
+}
+function renderMonthSummary(){
+  const fromEl=document.getElementById("summaryFromDate");
+  const toEl=document.getElementById("summaryToDate");
+  if(!fromEl||!toEl) return;
+
+  // Default: first day of the current month through today.
+  const now=today();
+  const defaultFrom=now.slice(0,8)+"01";
+  if(!fromEl.value) fromEl.value=defaultFrom;
+  if(!toEl.value) toEl.value=now;
+
+  const from=fromEl.value, to=toEl.value;
+  const el=document.getElementById("monthSummary");
+  if(!from||!to){
+    el.innerHTML='<div class="summaryEmpty">Please select both dates.</div>';
+    return;
+  }
+  if(from>to){
+    el.innerHTML='<div class="summaryEmpty">From Date cannot be after To Date.</div>';
+    return;
+  }
+
+  let income=0, expense=0, cats={};
+  data.entries.forEach(e=>{
+    if(!e.date || e.date<from || e.date>to) return;
+    // Only the user's own income/expenses are included.
+    // Behalf of Other's entries are deliberately excluded.
+    if(e.mode==="income") income+=Number(e.amount||0);
+    else if(e.mode==="expense"){
+      const cat=CATEGORY_MIGRATION[e.category]||e.category||"Miscellaneous";
+      const amount=Number(e.amount||0);
+      expense+=amount;
+      cats[cat]=(cats[cat]||0)+amount;
+    }
+  });
+
+  const net=income-expense;
+  const rows=Object.entries(cats).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  const SUMMARY_LABELS={
+    "Grocery / Food / Dining":"Food",
+    "Fuel / Transport / Travel":"Fuel",
+    "Shopping / Entertainment":"Shopping",
+    "Parents / Family Support":"Family Support",
+    "Medical & Health":"Medical",
+    "Mobile & Internet":"Mobile & Internet",
+    "Utility Bills":"Utility Bills",
+    "Personal":"Personal",
+    "Miscellaneous":"Miscellaneous"
+  };
+  const rowsHtml=rows.length
+    ? rows.map(([k,v])=>'<div class="summaryRow"><b>'+esc(SUMMARY_LABELS[k]||k)+'</b><span class="amt exp">'+fmt(v)+'</span></div>').join("")
+    : '<div class="summaryEmpty">No main expenses recorded for this period.</div>';
+
+  const openingDate = new Date(from + "T00:00:00");
+  openingDate.setDate(openingDate.getDate()-1);
+  const openingBalance = accountsTotal(openingDate.toISOString().slice(0,10));
+  const closingBalance = accountsTotal(to);
+  const periodLabel = `${new Date(from+"T00:00:00").toLocaleDateString("en-PK",{day:"2-digit",month:"short",year:"numeric"})} → ${new Date(to+"T00:00:00").toLocaleDateString("en-PK",{day:"2-digit",month:"short",year:"numeric"})}`;
+  el.innerHTML=`
+    <div class="summaryPage">
+      <div class="summaryTop">
+        <div><div class="eyebrow">Money Manager</div><h2>Period Summary</h2></div>
+        <div class="summaryPeriod">${esc(periodLabel)}</div>
+      </div>
+      <div class="summaryHero">
+        <div class="heroLabel">Remaining from own income & expenses</div>
+        <span class="heroValue">${fmt(net)}</span>
+        <div class="heroSub">${net>=0?"You kept this amount after your recorded expenses.":"Your recorded expenses exceeded income by this amount."}</div>
+      </div>
+      <div class="summaryBalance">
+        <div class="summaryBalanceCard"><small>Balance at period start</small><b>${fmt(openingBalance)}</b><div class="date">Before ${esc(from)}</div></div>
+        <div class="summaryBalanceCard"><small>Balance at period end</small><b>${fmt(closingBalance)}</b><div class="date">As of ${esc(to)}</div></div>
+      </div>
+      <div class="summaryGrid">
+        <div class="summaryMetric"><small>Total Income</small><b>${fmt(income)}</b></div>
+        <div class="summaryMetric"><small>Total Expenses</small><b>${fmt(expense)}</b></div>
+      </div>
+      <div class="summarySection"><div class="head"><h3>Expense Breakdown</h3></div>
+        ${rowsHtml}
+        <div class="summaryNote">Own income and expenses are shown here. Behalf of Other's and account-to-account transfers are excluded from the income/expense totals. Balance cards show the actual total account position.</div>
+      </div>
+    </div>`;
+}
+
+// Keep the summary dates sensible whenever the page is opened.
+document.addEventListener("DOMContentLoaded",()=>{
+  const fromEl=document.getElementById("summaryFromDate");
+  const toEl=document.getElementById("summaryToDate");
+  if(fromEl&&toEl){
+    const now=today();
+    fromEl.value=now.slice(0,8)+"01";
+    toEl.value=now;
+  }
+});
 
 /* ---------- History ---------- */
 function mixedHistory(){
@@ -973,7 +1054,7 @@ function render(){
 
   recentList.innerHTML=mixedHistory().slice(0,5).map(historyRow).join("")||'<div class="empty">No activity yet</div>';
 
-  accountList.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button><button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button><input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("") || `<div class="empty">No account heads found. Restore a valid backup or tap + Add to create one.</div>`;
+  accountList.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button><button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button><input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("") || `<div class="empty">No account heads found. tap + Add to create one.</div>`;
   adjustmentList.innerHTML=data.adjustments.slice().sort((a,b)=>((b.date)+(b.created||"")).localeCompare((a.date)+(a.created||""))).map(historyRow).join("")||'<div class="empty">No adjustments yet</div>';
 
   let inc=0,exp=0,cats={};data.entries.forEach(e=>{if(e.mode==="income")inc+=Number(e.amount||0);else if(e.mode==="expense"){exp+=Number(e.amount||0);cats[e.category]=(cats[e.category]||0)+Number(e.amount||0);}});
@@ -997,12 +1078,20 @@ transferFrom.addEventListener("change",()=>refreshCalc("transfer"));transferTo.a
 adjustAccount.addEventListener("change",()=>refreshCalc("adjust"));
 
 render();
+const summaryFromEl=document.getElementById("summaryFromDate");
+const summaryToEl=document.getElementById("summaryToDate");
+if(summaryFromEl&&summaryToEl){
+  const now=today();
+  summaryFromEl.value=now.slice(0,8)+"01";
+  summaryToEl.value=now;
+  renderMonthSummary();
+}
 
-/* Fresh PWA update — schema/cache v32 */
+/* Fresh PWA update — schema/cache v36 */
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("sw.js?v=32",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js?v=36",{updateViaCache:"none"});
       await reg.update();
     }catch(e){}
   });
