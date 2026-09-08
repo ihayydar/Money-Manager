@@ -235,7 +235,7 @@ const CATEGORY_MIGRATION = {
   "Miscellaneous Personal":"Miscellaneous", "Miscellaneous":"Miscellaneous"
 };
 const STORE_KEY = "moneyManagerV5";
-const SCHEMA_VERSION = 39;
+const SCHEMA_VERSION = 40;
 
 const initialData = {
   schemaVersion:SCHEMA_VERSION,
@@ -698,7 +698,8 @@ async function saveEntry(){
     if(old) data.entries=data.entries.map(x=>x.id===id?old:x); else data.entries=data.entries.filter(x=>x.id!==id);
     return alert("Entry was not saved because the ledger failed an integrity check.\n\n"+issues.slice(0,5).join("\n"));
   }
-  saveData(); closeModal("entryModal");
+  if(!saveData()){ if(old) data.entries=data.entries.map(x=>x.id===id?old:x); else data.entries=data.entries.filter(x=>x.id!==id); render(); return; }
+  closeModal("entryModal");
 }
 
 /* ---------- Transfer ---------- */
@@ -730,17 +731,23 @@ function saveTransfer(){
   if(old)data.transfers=data.transfers.map(x=>x.id===old.id?payload:x);else data.transfers.push(payload);
   const issues=auditReport();
   if(issues.length){ if(old)data.transfers=data.transfers.map(x=>x.id===old.id?old:x); else data.transfers=data.transfers.filter(x=>x.id!==payload.id); return alert("Transfer was not saved because the ledger failed an integrity check.\n\n"+issues.slice(0,5).join("\n")); }
-  saveData();closeModal("transferModal");
+  if(!saveData()){ if(old)data.transfers=data.transfers.map(x=>x.id===old.id?old:x); else data.transfers=data.transfers.filter(x=>x.id!==payload.id); render(); return; }
+  closeModal("transferModal");
 }
 
 /* ---------- Adjust ---------- */
 function openAdjust(){
-  editState={type:null,id:null};adjustDeleteBtn.style.display="none";adjustAccount.innerHTML=data.accounts.map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join("");
+  editState={type:null,id:null};adjustDeleteBtn.style.display="none";
+  // Only active accounts may be adjusted. An inactive account must always stay at Rs 0 —
+  // letting it be adjusted here would silently defeat the balance-safety rule on deactivation.
+  adjustAccount.innerHTML=activeAccounts().map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join("");
   adjustDate.value=today();adjustNote.value="";calc.adjust="";refreshCalc("adjust");adjustModal.style.display="flex";
 }
 function editAdjust(id){
   const x=data.adjustments.find(a=>a.id===id);if(!x)return;editState={type:"adjust",id};adjustDeleteBtn.style.display="block";
-  adjustAccount.innerHTML=data.accounts.map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join("");adjustAccount.value=x.accountId;adjustDate.value=x.date;adjustNote.value=x.note||"";calc.adjust=String(x.delta);refreshCalc("adjust");adjustModal.style.display="flex";
+  // Keep the account this adjustment already references selectable even if it has since
+  // been deactivated, so existing history stays editable — but never offer other inactive accounts.
+  adjustAccount.innerHTML=data.accounts.filter(a=>a.active||a.id===x.accountId).map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join("");adjustAccount.value=x.accountId;adjustDate.value=x.date;adjustNote.value=x.note||"";calc.adjust=String(x.delta);refreshCalc("adjust");adjustModal.style.display="flex";
 }
 function refreshAdjustPreview(){
   const p=adjustPreview;if(!p)return;const id=adjustAccount.value,delta=evalCalc(calc.adjust);if(!id){p.innerHTML="";return;}
@@ -756,7 +763,8 @@ function saveAdjust(){
   if(old)data.adjustments=data.adjustments.map(x=>x.id===old.id?payload:x);else data.adjustments.push(payload);
   const issues=auditReport();
   if(issues.length){ if(old)data.adjustments=data.adjustments.map(x=>x.id===old.id?old:x); else data.adjustments=data.adjustments.filter(x=>x.id!==payload.id); return alert("Adjustment was not saved because the ledger failed an integrity check.\n\n"+issues.slice(0,5).join("\n")); }
-  saveData();closeModal("adjustModal");
+  if(!saveData()){ if(old)data.adjustments=data.adjustments.map(x=>x.id===old.id?old:x); else data.adjustments=data.adjustments.filter(x=>x.id!==payload.id); render(); return; }
+  closeModal("adjustModal");
 }
 
 /* ---------- Accounts ---------- */
@@ -1055,7 +1063,7 @@ function render(){
 
   const accountListEl=document.getElementById("accountList");
   const adjustmentListEl=document.getElementById("adjustmentList");
-  if(accountListEl) accountListEl.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button><button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button><input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("") || `<div class="empty">No account heads found. tap + Add to create one.</div>`;
+  if(accountListEl) accountListEl.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button>${a.active?`<button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button>`:""}<input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("") || `<div class="empty">No account heads found. tap + Add to create one.</div>`;
   if(adjustmentListEl) adjustmentListEl.innerHTML=data.adjustments.slice().sort((a,b)=>((b.date)+(b.created||"")).localeCompare((a.date)+(a.created||""))).map(historyRow).join("")||'<div class="empty">No adjustments yet</div>';
 
   let inc=0,exp=0,cats={};data.entries.forEach(e=>{if(e.mode==="income")inc+=Number(e.amount||0);else if(e.mode==="expense"){exp+=Number(e.amount||0);cats[e.category]=(cats[e.category]||0)+Number(e.amount||0);}});
@@ -1092,7 +1100,7 @@ if(summaryFromEl&&summaryToEl){
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("sw.js?v=39",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js?v=40",{updateViaCache:"none"});
       await reg.update();
     }catch(e){}
   });
