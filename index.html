@@ -62,7 +62,7 @@ button{touch-action:manipulation}
 
 <section id="home" class="screen active">
   <div class="top">
-    <div class="brand"><h1>Money Manager</h1><small>Every rupee has a trail • v31</small></div>
+    <div class="brand"><h1>Money Manager</h1><small>Every rupee has a trail</small></div>
     <button class="gear" onclick="go('accounts',4)">⚙</button>
   </div>
   <div class="hero">
@@ -70,7 +70,7 @@ button{touch-action:manipulation}
     <div class="big" id="homeMature">Rs 0</div>
     <div class="heroGrid">
       <div class="mini"><small>Total Accounts</small><b id="homeTotalAccounts">Rs 0</b></div>
-      <div class="mini"><small>Held for Other's</small><b id="homeLiabilities">Rs 0</b></div>
+      <div class="mini"><small>Held for Others</small><b id="homeLiabilities">Rs 0</b></div>
     </div>
   </div>
 
@@ -141,6 +141,7 @@ button{touch-action:manipulation}
   </div>
   <div id="accountList"></div>
   <div class="sec"><div class="head"><h3>Adjustment History</h3></div><div id="adjustmentList"></div></div>
+  <div class="sec"><div class="head"><h3>Data Safety</h3></div><div class="card"><small>Keep a personal backup before major updates or device changes.</small><button class="btn primary" onclick="exportBackup()">Download Backup</button><button class="btn secondary" onclick="document.getElementById('restoreFile').click()">Restore Backup</button><input id="restoreFile" type="file" accept="application/json" style="display:none" onchange="importBackup(this.files[0])"></div></div>
 </section>
 </div>
 
@@ -159,6 +160,7 @@ button{touch-action:manipulation}
     <option value="income">Income</option><option value="expense">Expense</option><option value="behalf">Behalf of Other's</option>
   </select></div>
   <div class="field"><label>Behalf Action</label><select id="behalfAction" onchange="changeBehalfAction(this.value)"><option value="plus">Receive / Add</option><option value="minus">Return / Reduce</option></select></div>
+  <div class="field" id="behalfEffectWrap" style="display:none"><label>Account Effect</label><select id="behalfEffect" onchange="refreshEntryPreview()"><option value="included">Already included in account balance — do not add again</option><option value="new">New money entering account — add amount</option><option value="out">Money leaving account — subtract amount</option></select></div>
   <div class="field" id="entryCategoryWrap"><label>Category</label><select id="entryCategory"></select></div>
   <div id="entryCalc"></div>
   <div class="field"><label>Date</label><input id="entryDate" type="date"></div>
@@ -253,6 +255,14 @@ let data = (()=>{
     return JSON.parse(JSON.stringify(initialData));
   }
 })();
+/* v32 safety backup: preserve the last stored ledger before any migration/repair. */
+try{
+  const existing=localStorage.getItem(STORE_KEY);
+  if(existing && !localStorage.getItem(STORE_KEY+"_pre_v32_backup")){
+    localStorage.setItem(STORE_KEY+"_pre_v32_backup",existing);
+  }
+}catch(e){ console.warn("Pre-v32 backup could not be created",e); }
+
 let mode = "income";
 let editState = {type:null,id:null};
 let historyFilter = "all";
@@ -351,7 +361,11 @@ function auditAndRepairData(){
     e.date=/^\d{4}-\d{2}-\d{2}$/.test(e.date||"")?e.date:today();
     e.mode=["income","expense","behalf"].includes(e.mode)?e.mode:"expense";
     if(e.mode==="expense") e.category=CATEGORY_MIGRATION[e.category]||"Miscellaneous";
-    if(e.mode==="behalf") e.behalfDirection=e.behalfDirection==="minus"?"minus":"plus";
+    if(e.mode==="behalf"){
+      e.behalfDirection=e.behalfDirection==="minus"?"minus":"plus";
+      if(!["included","new","out"].includes(e.accountEffect)) e.accountEffect=e.behalfDirection==="plus"?"included":"out";
+      if(e.behalfDirection==="minus") e.accountEffect="out";
+    }
     e.note=String(e.note||""); e.created=e.created||new Date().toISOString();
     return e;
   });
@@ -393,6 +407,7 @@ function auditReport(){
   data.entries.forEach(e=>{
     if(!ids.has(e.accountId)) issues.push("Entry references missing account: "+e.id);
     if(e.mode==="behalf" && !["plus","minus"].includes(e.behalfDirection)) issues.push("Invalid Behalf direction: "+e.id);
+     if(e.mode==="behalf" && !["included","new","out"].includes(e.accountEffect)) issues.push("Invalid Held account effect: "+e.id);
     if(Number(e.amount)<=0) issues.push("Non-positive entry amount: "+e.id);
   });
   data.transfers.forEach(t=>{
@@ -438,19 +453,19 @@ function migrateData(){
       id:l.id||uid(), mode:"behalf", behalfDirection:l.direction==="minus"?"minus":"plus",
       accountId:l.accountId||fallback, category:"Behalf of Other's", amount:Math.abs(Number(l.amount||0)),
       date:l.date||today(), note:l.note||"", created:l.created||new Date().toISOString(),
-      attachmentKey:l.attachmentKey||"", migrated:true, needsAccountReview:!l.accountId
+      attachmentKey:l.attachmentKey||"", migrated:true, needsAccountReview:!l.accountId, accountEffect:l.direction==="minus"?"out":"included"
     }));
     legacyOthers.forEach(o=>data.entries.push({
       id:o.id||uid(), mode:"behalf", behalfDirection:o.action==="received"?"plus":"minus",
       accountId:o.accountId||fallback, category:"Behalf of Other's", amount:Math.abs(Number(o.amount||0)),
       date:o.date||today(), note:o.note||"", created:o.created||new Date().toISOString(),
-      attachmentKey:o.attachmentKey||"", migrated:true, needsAccountReview:!o.accountId
+      attachmentKey:o.attachmentKey||"", migrated:true, needsAccountReview:!o.accountId, accountEffect:o.action==="received"?"included":"out"
     }));
     legacyLoans.forEach(e=>data.entries.push({
       id:e.id||uid(), mode:"behalf", behalfDirection:e.category==="Borrowed / Loan Received"?"plus":"minus",
       accountId:e.accountId||fallback, category:"Behalf of Other's", amount:Math.abs(Number(e.amount||0)),
       date:e.date||today(), note:e.note||(e.category==="Borrowed / Loan Received"?"Loan Received":"Loan Repayment"),
-      created:e.created||new Date().toISOString(), attachmentKey:e.attachmentKey||"", migrated:true, needsAccountReview:!e.accountId
+      created:e.created||new Date().toISOString(), attachmentKey:e.attachmentKey||"", migrated:true, needsAccountReview:!e.accountId, accountEffect:e.category==="Borrowed / Loan Received"?"included":"out"
     }));
     data.entries=data.entries.filter(e=>e.mode!=="loan");
     data.others=[]; data.liabilities=[]; data.schemaVersion=29;
@@ -525,7 +540,10 @@ function entryDelta(e){
   const amount=Number(e.amount||0);
   if(e.mode==="income") return amount;
   if(e.mode==="expense") return -amount;
-  if(e.mode==="behalf") return e.behalfDirection==="plus" ? amount : -amount;
+  if(e.mode==="behalf"){
+    if(e.accountEffect==="included") return 0;
+    return e.accountEffect==="new" ? amount : -amount;
+  }
   return 0;
 }
 function balance(accountId,date=today(),exclude=null){
@@ -661,7 +679,9 @@ async function saveEntry(){
   const isBehalf=mode==="behalf";
   const exclude=editState.type==="entry"?{type:"entry",id:editState.id}:null;
   const before=balance(entryAccount.value,txDate,exclude);
-  if((mode==="expense" || (isBehalf&&liabilityDirection==="minus")) && amount>before) return alert("This account does not have enough balance on this date.");
+  const accountEffect=isBehalf?(liabilityDirection==="minus"?"out":behalfEffect.value):null;
+   const accountDelta=isBehalf?(accountEffect==="new"?amount:accountEffect==="out"?-amount:0):(mode==="expense"?-amount:amount);
+   if(accountDelta<0 && Math.abs(accountDelta)>before) return alert("This account does not have enough balance on this date.");
   if(isBehalf && liabilityDirection==="minus"){
     const outstanding=liabilityTotal(txDate,exclude);
     if(amount>outstanding)return alert(`Return cannot exceed the outstanding Behalf amount of ${heroFmt(outstanding)}.`);
@@ -678,7 +698,7 @@ async function saveEntry(){
       if(previousKey && previousKey!==attachmentKey) await mediaDelete(previousKey);
     }catch(e){ return alert("Could not save photo. Try a smaller image."); }
   }
-  const payload={id,mode,behalfDirection:isBehalf?liabilityDirection:undefined,accountId:entryAccount.value,category:isBehalf?"Behalf of Other's":(CATEGORY_MIGRATION[entryCategory.value]||"Miscellaneous"),amount,date:txDate,note:entryNote.value.trim(),created:old?.created||new Date().toISOString(),attachmentKey};
+  const payload={id,mode,behalfDirection:isBehalf?liabilityDirection:undefined,accountId:entryAccount.value,category:isBehalf?"Behalf of Other's":(CATEGORY_MIGRATION[entryCategory.value]||"Miscellaneous"),accountEffect,amount,date:txDate,note:entryNote.value.trim(),created:old?.created||new Date().toISOString(),attachmentKey};
   if(old) data.entries=data.entries.map(x=>x.id===id?payload:x); else data.entries.push(payload);
   const issues=auditReport();
   if(issues.length){
@@ -863,6 +883,31 @@ async function deleteEditing(type){
     data.accounts=data.accounts.filter(x=>x.id!==id);closeModal("accountModal");
   }
   saveData();
+}
+
+/* ---------- Backup / Restore ---------- */
+function exportBackup(){
+  try{
+    const payload={app:"Money Manager",version:SCHEMA_VERSION,exportedAt:new Date().toISOString(),data:data};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob); const a=document.createElement("a");
+    a.href=url; a.download=`money-manager-backup-${today()}.json`;
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }catch(err){ console.error("exportBackup",err); alert("Backup could not be created."); }
+}
+async function importBackup(file){
+  if(!file)return;
+  try{
+    const parsed=JSON.parse(await file.text()); const incoming=parsed?.data||parsed;
+    if(!incoming || !Array.isArray(incoming.accounts)||!Array.isArray(incoming.entries)||!Array.isArray(incoming.transfers)||!Array.isArray(incoming.adjustments)) throw new Error("Invalid backup structure");
+    if(!confirm("Restore this backup? Your current ledger will be replaced. Export the current ledger first if needed.")) return;
+    const previous=JSON.parse(JSON.stringify(data)); data=JSON.parse(JSON.stringify(incoming));
+    migrateData(); auditAndRepairData(); const issues=auditReport();
+    if(issues.length){ data=previous; saveData(); throw new Error(issues.slice(0,5).join("; ")); }
+    data.schemaVersion=SCHEMA_VERSION; if(!saveData()){ data=previous; saveData(); return; }
+    alert("Backup restored successfully. Please verify balances and history.");
+  }catch(err){ console.error("importBackup",err); alert("Backup could not be restored. No valid changes were applied.\n\n"+(err.message||"Invalid file.")); }
+  finally{ const input=document.getElementById("restoreFile"); if(input) input.value=""; }
 }
 
 /* ---------- History ---------- */
