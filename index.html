@@ -164,6 +164,7 @@ button{touch-action:manipulation}
   </select></div>
   <div class="field"><label>Behalf Action</label><select id="behalfAction" onchange="changeBehalfAction(this.value)"><option value="plus">Receive / Add</option><option value="minus">Return / Reduce</option></select></div>
   <div class="field" id="behalfEffectWrap" style="display:none"><label>Account Effect</label><select id="behalfEffect" onchange="refreshEntryPreview()"><option value="included">Already included in account balance — do not add again</option><option value="new">New money entering account — add amount</option><option value="out">Money leaving account — subtract amount</option></select></div>
+  <div class="field"><label>Account</label><select id="entryAccount" onchange="refreshEntryPreview()"></select></div>
   <div class="field" id="entryCategoryWrap"><label>Category</label><select id="entryCategory"></select></div>
   <div id="entryCalc"></div>
   <div class="field"><label>Date</label><input id="entryDate" type="date"></div>
@@ -235,7 +236,7 @@ const CATEGORY_MIGRATION = {
   "Miscellaneous Personal":"Miscellaneous", "Miscellaneous":"Miscellaneous"
 };
 const STORE_KEY = "moneyManagerV5";
-const SCHEMA_VERSION = 40;
+const SCHEMA_VERSION = 41;
 
 const initialData = {
   schemaVersion:SCHEMA_VERSION,
@@ -280,7 +281,12 @@ function fmt(n){ return "₨ " + Number(n||0).toLocaleString("en-PK",{maximumFra
 function heroFmt(n){ return "Rs " + Number(n||0).toLocaleString("en-PK",{maximumFractionDigits:0}); }
 function acc(id){ return data.accounts.find(a=>a.id===id); }
 function esc(v){ return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
-function jsq(v){ return JSON.stringify(String(v??"")); }
+// jsq() is always embedded inside a double-quoted onclick="..." HTML attribute. JSON.stringify()
+// wraps its output in double quotes too, which — unescaped — prematurely terminates the HTML
+// attribute and truncates the handler (e.g. onclick="editAccount(" instead of the full call).
+// HTML-entity-encoding the quotes lets the browser's attribute parser decode them back to real
+// quote characters before the onclick JS ever runs, so the handler sees a normal string literal.
+function jsq(v){ return JSON.stringify(String(v??"")).replace(/"/g,"&quot;"); }
 function uid(){
   if(window.crypto?.randomUUID) return window.crypto.randomUUID();
   return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2);
@@ -1057,7 +1063,7 @@ document.querySelectorAll(".chip").forEach(btn=>btn.addEventListener("click",()=
 /* ---------- Render ---------- */
 function render(){
   const at=accountsTotal(), liab=liabilityTotal(), mat=mature();
-  homeMature.textContent=heroFmt(mat);homeTotalAccounts.textContent=heroFmt(at);homeLiabilities.textContent=heroFmt(liab);homeAccountCard.textContent=heroFmt(at);homeLiabilityCard.textContent=heroFmt(liab);
+  homeMature.textContent=heroFmt(mat);homeTotalAccounts.textContent=heroFmt(at);homeLiabilities.textContent=heroFmt(liab);homeAccountCard.textContent=heroFmt(at);
 
   recentList.innerHTML=mixedHistory().slice(0,5).map(historyRow).join("")||'<div class="empty">No activity yet</div>';
 
@@ -1065,10 +1071,6 @@ function render(){
   const adjustmentListEl=document.getElementById("adjustmentList");
   if(accountListEl) accountListEl.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button>${a.active?`<button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button>`:""}<input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("") || `<div class="empty">No account heads found. tap + Add to create one.</div>`;
   if(adjustmentListEl) adjustmentListEl.innerHTML=data.adjustments.slice().sort((a,b)=>((b.date)+(b.created||"")).localeCompare((a.date)+(a.created||""))).map(historyRow).join("")||'<div class="empty">No adjustments yet</div>';
-
-  let inc=0,exp=0,cats={};data.entries.forEach(e=>{if(e.mode==="income")inc+=Number(e.amount||0);else if(e.mode==="expense"){exp+=Number(e.amount||0);cats[e.category]=(cats[e.category]||0)+Number(e.amount||0);}});
-  reportIncome.textContent=fmt(inc);reportExpense.textContent=fmt(exp);reportLiability.textContent=fmt(liab);reportMature.textContent=fmt(mat);
-  categoryReport.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row"><div class="rowText"><b>${k}</b></div><div class="amt exp">${fmt(v)}</div></div>`).join("")||'<div class="empty">No expense data</div>';
 
   renderStatus(); if(document.getElementById("activity").classList.contains("active"))renderHistory();
 }
@@ -1100,7 +1102,7 @@ if(summaryFromEl&&summaryToEl){
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("sw.js?v=40",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js?v=41",{updateViaCache:"none"});
       await reg.update();
     }catch(e){}
   });
