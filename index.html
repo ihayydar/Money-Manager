@@ -284,8 +284,16 @@ function uid(){
   return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2);
 }
 function saveData(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); render(); }
-  catch(e){ console.error("saveData failed",e); alert("Could not save the data. Please free some browser storage and try again."); }
+  try{
+    const serialized=JSON.stringify(data);
+    localStorage.setItem(STORE_KEY,serialized);
+    try{ render(); }catch(renderErr){ console.error("Render after save failed",renderErr); }
+    return true;
+  }catch(e){
+    console.error("saveData failed",e);
+    alert("Could not save the data. Please free some browser storage and try again.");
+    return false;
+  }
 }
 function evalCalc(raw){
   if(!raw || !/[0-9]/.test(raw) || !/^[0-9+\-*/. ]+$/.test(raw)) return 0;
@@ -800,55 +808,39 @@ function editAccount(id){
 }
 
 function saveAccount(){
-  try{
-    const nameEl=document.getElementById("accountName");
-    const typeEl=document.getElementById("accountType");
-    const openingEl=document.getElementById("accountOpening");
-    const activeEl=document.getElementById("accountActive");
+  const nameEl=document.getElementById("accountName");
+  const typeEl=document.getElementById("accountType");
+  const openingEl=document.getElementById("accountOpening");
+  const activeEl=document.getElementById("accountActive");
 
-    const accountNameValue=(nameEl?.value||"").trim();
-    if(!accountNameValue){
-      alert("Enter account name.");
-      nameEl?.focus();
-      return;
-    }
+  const accountNameValue=(nameEl?.value||"").trim();
+  if(!accountNameValue){ alert("Enter account name."); nameEl?.focus(); return; }
+  const openingValue=parseFloat(openingEl?.value || "0");
+  if(!Number.isFinite(openingValue)){ alert("Enter a valid opening balance."); openingEl?.focus(); return; }
 
-    const openingValue=parseFloat(openingEl?.value || "0");
-    if(!Number.isFinite(openingValue)){
-      alert("Enter a valid opening balance.");
-      openingEl?.focus();
-      return;
-    }
+  const old=editState.type==="account" ? acc(editState.id) : null;
+  const previous=JSON.parse(JSON.stringify(data));
+  const payload={
+    id:old?.id||uid(),
+    name:accountNameValue,
+    type:typeEl?.value||"Cash",
+    opening:old ? Number(old.opening||0) : openingValue,
+    active:(activeEl?.value||"true")==="true"
+  };
 
-    const old=editState.type==="account" ? acc(editState.id) : null;
-    const payload={
-      id: old?.id || ("a"+uid()),
-      name: accountNameValue,
-      type: typeEl?.value || "Cash",
-      opening: old ? Number(old.opening||0) : openingValue,
-      active: (activeEl?.value || "true")==="true"
-    };
+  if(old) data.accounts=data.accounts.map(x=>x.id===old.id?payload:x);
+  else data.accounts.push(payload);
 
-    if(old){
-      data.accounts=data.accounts.map(x=>x.id===old.id?payload:x);
-    }else{
-      data.accounts.push(payload);
-    }
-
-    localStorage.setItem(STORE_KEY,JSON.stringify(data));
-    document.getElementById("accountModal").style.display="none";
-    editState={type:null,id:null};
-    render();
-
-    // Verify it really exists after save.
-    if(!data.accounts.some(a=>a.id===payload.id)){
-      alert("Account could not be saved. Please try again.");
-      return;
-    }
-  }catch(err){
-    console.error("saveAccount error",err);
-    alert("Account save error. Please reload the app and try again.");
+  if(!saveData()){
+    data=previous;
+    try{ localStorage.setItem(STORE_KEY,JSON.stringify(data)); }catch(e){}
+    return;
   }
+
+  document.getElementById("accountModal").style.display="none";
+  editState={type:null,id:null};
+  // Never report a false "account save error" because a render problem occurred after a successful save.
+  try{ render(); }catch(err){ console.error("Account render failed after successful save",err); }
 }
 
 function toggleAccount(id,active){
@@ -898,16 +890,41 @@ function exportBackup(){
 async function importBackup(file){
   if(!file)return;
   try{
-    const parsed=JSON.parse(await file.text()); const incoming=parsed?.data||parsed;
-    if(!incoming || !Array.isArray(incoming.accounts)||!Array.isArray(incoming.entries)||!Array.isArray(incoming.transfers)||!Array.isArray(incoming.adjustments)) throw new Error("Invalid backup structure");
+    const parsed=JSON.parse(await file.text());
+    const incoming=parsed?.data||parsed?.ledger||parsed;
+    if(!incoming || !Array.isArray(incoming.accounts)||!Array.isArray(incoming.entries)||!Array.isArray(incoming.transfers)||!Array.isArray(incoming.adjustments)){
+      throw new Error("Invalid backup structure");
+    }
+    if(!incoming.accounts.length){
+      throw new Error("This backup contains no account heads. The existing accounts were not replaced.");
+    }
     if(!confirm("Restore this backup? Your current ledger will be replaced. Export the current ledger first if needed.")) return;
-    const previous=JSON.parse(JSON.stringify(data)); data=JSON.parse(JSON.stringify(incoming));
-    migrateData(); auditAndRepairData(); const issues=auditReport();
-    if(issues.length){ data=previous; saveData(); throw new Error(issues.slice(0,5).join("; ")); }
-    data.schemaVersion=SCHEMA_VERSION; if(!saveData()){ data=previous; saveData(); return; }
-    alert("Backup restored successfully. Please verify balances and history.");
-  }catch(err){ console.error("importBackup",err); alert("Backup could not be restored. No valid changes were applied.\n\n"+(err.message||"Invalid file.")); }
-  finally{ const input=document.getElementById("restoreFile"); if(input) input.value=""; }
+
+    const previous=JSON.parse(JSON.stringify(data));
+    const candidate=JSON.parse(JSON.stringify(incoming));
+    data=candidate;
+    migrateData();
+    auditAndRepairData();
+    const issues=auditReport();
+    if(issues.length){
+      data=previous;
+      saveData();
+      throw new Error(issues.slice(0,5).join("; "));
+    }
+    data.schemaVersion=SCHEMA_VERSION;
+    if(!saveData()){
+      data=previous;
+      saveData();
+      throw new Error("The restored data could not be saved to this browser.");
+    }
+    alert("Backup restored successfully. Accounts, balances and history have been restored.");
+    try{ render(); }catch(err){ console.error("Render after restore failed",err); }
+  }catch(err){
+    console.error("importBackup",err);
+    alert("Backup could not be restored. No valid changes were applied.\n\n"+(err.message||"Invalid file."));
+  }finally{
+    const input=document.getElementById("restoreFile"); if(input) input.value="";
+  }
 }
 
 /* ---------- History ---------- */
@@ -956,7 +973,7 @@ function render(){
 
   recentList.innerHTML=mixedHistory().slice(0,5).map(historyRow).join("")||'<div class="empty">No activity yet</div>';
 
-  accountList.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button><button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button><input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("");
+  accountList.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button><button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button><input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("") || `<div class="empty">No account heads found. Restore a valid backup or tap + Add to create one.</div>`;
   adjustmentList.innerHTML=data.adjustments.slice().sort((a,b)=>((b.date)+(b.created||"")).localeCompare((a.date)+(a.created||""))).map(historyRow).join("")||'<div class="empty">No adjustments yet</div>';
 
   let inc=0,exp=0,cats={};data.entries.forEach(e=>{if(e.mode==="income")inc+=Number(e.amount||0);else if(e.mode==="expense"){exp+=Number(e.amount||0);cats[e.category]=(cats[e.category]||0)+Number(e.amount||0);}});
