@@ -17,11 +17,11 @@
   --amber:#a86b18;--violet:#6253b3;--shadow:0 10px 28px rgba(20,45,40,.06)
 }
 *{box-sizing:border-box} html,body,#root{overscroll-behavior-x:none} img,svg,video,canvas,iframe{max-width:100%;}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;width:100%;max-width:100%;overflow-x:hidden}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;width:100%;max-width:100%;overflow-x:hidden;touch-action:pan-y}
 body{margin:0;width:100%;min-width:0;max-width:100%;overflow-x:hidden;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
 button,input,select{font:inherit} input,select{font-size:16px!important}
 button{touch-action:manipulation}
-.app{width:100%;max-width:560px;min-width:0;margin:auto;padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 94px)}
+.app{width:100%;max-width:560px;min-width:0;margin:auto;padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 94px);touch-action:pan-y}
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .brand h1{font-size:24px;letter-spacing:-.5px;margin:0}.brand small,.muted{color:var(--muted);font-size:12px}
 .gear{width:42px;height:42px;border:1px solid var(--line);background:#fff;color:var(--green);border-radius:14px;font-size:18px}
@@ -44,7 +44,7 @@ button{touch-action:manipulation}
 .sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.sum{background:#fff;border:1px solid var(--line);border-radius:17px;padding:12px}.sum small{color:var(--muted)}.sum b{display:block;font-size:17px;margin-top:4px}
 .nav{position:fixed;left:0;transform:none;bottom:0;width:100%;max-width:560px;right:0;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 6px calc(env(safe-area-inset-bottom) + 8px);z-index:20}
 .nav button{border:0;background:transparent;color:#7b8985;font-size:10px;font-weight:750;padding:7px 3px;border-radius:11px}.nav span{display:block;font-size:20px;line-height:21px}.nav .active{background:var(--soft);color:var(--green)}
-.modal{display:none;position:fixed;inset:0;background:rgba(10,25,22,.38);align-items:flex-end;justify-content:center;z-index:50}.sheet{width:min(560px,100%);min-width:0;background:#fff;border-radius:28px 28px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);max-height:92vh;overflow:auto}.drag{width:44px;height:5px;background:#dfe6e3;border-radius:99px;margin:0 auto 14px}.sheet h2{font-size:21px;margin:0 0 12px}
+.modal{display:none;position:fixed;inset:0;background:rgba(10,25,22,.38);align-items:flex-end;justify-content:center;z-index:50}.sheet{width:min(560px,100%);min-width:0;background:#fff;border-radius:28px 28px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);max-height:92vh;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;touch-action:pan-y}.drag{width:44px;height:5px;background:#dfe6e3;border-radius:99px;margin:0 auto 14px}.sheet h2{font-size:21px;margin:0 0 12px}
 .field{margin:11px 0}.field label{display:block;color:var(--muted);font-size:12px;font-weight:750;margin:0 0 6px 2px}input,select{width:100%;max-width:100%;border:1px solid var(--line);border-radius:15px;padding:13px 12px;background:#fff}
 .btn{width:100%;border:0;border-radius:16px;padding:13px;font-size:15px;font-weight:850;margin-top:8px}.primary{background:var(--green);color:#fff}.secondary{background:#edf2f0;color:#34413e}.danger{background:#fff0f0;color:var(--red)}
 .calc{background:#f8faf9;border:1px solid var(--line);border-radius:20px;padding:12px;margin:10px 0}.display{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;text-align:right;min-width:0;overflow:hidden}.display small{color:var(--muted);font-size:11px}.display b{display:block;font-size:30px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.calcExpression{color:var(--ink-soft);font-size:12px;font-weight:750;min-height:18px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.preview{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:12px;flex-wrap:wrap}.preview span{color:var(--muted)}.preview strong{color:var(--ink)}
@@ -144,7 +144,7 @@ button{touch-action:manipulation}
   </div>
   <div id="accountList"></div>
   <div class="sec"><div class="head"><h3>Adjustment History</h3></div><div id="adjustmentList"></div></div>
-  <div class="sec"><div class="head"><h3>Data Safety</h3></div><div class="card"><small>Clean all transaction history while keeping active account balances as new starting balances.</small><button class="btn danger" onclick="cleanHistory()">Clean History</button></div></div>
+  <div class="sec"><div class="head"><h3>Data Safety</h3></div><div class="card"><small>Clean all transaction history while keeping active account balances and any outstanding Held for Others balance as new starting figures.</small><button class="btn danger" onclick="cleanHistory()">Clean History</button></div></div>
 </section>
 </div>
 
@@ -236,7 +236,7 @@ const CATEGORY_MIGRATION = {
   "Miscellaneous Personal":"Miscellaneous", "Miscellaneous":"Miscellaneous"
 };
 const STORE_KEY = "moneyManagerV5";
-const SCHEMA_VERSION = 41;
+const SCHEMA_VERSION = 44;
 
 const initialData = {
   schemaVersion:SCHEMA_VERSION,
@@ -432,7 +432,13 @@ function auditReport(){
     if(!Number.isFinite(Number(a.opening))) issues.push("Invalid opening balance: "+a.name);
   });
   data.entries.forEach(e=>{
-    if(!ids.has(e.accountId)) issues.push("Entry references missing account: "+e.id);
+    // Behalf-of-Other's entries are allowed to have no linked account — that's an established,
+    // legitimate state in this data model (see the "Unlinked account" fallback in History, and
+    // migrated legacy entries that intentionally carry accountId:""). Only flag a missing
+    // account for Behalf entries when one WAS set but no longer exists; Income/Expense entries
+    // must always reference a real account.
+    if(e.mode==="behalf"){ if(e.accountId && !ids.has(e.accountId)) issues.push("Entry references missing account: "+e.id); }
+    else if(!ids.has(e.accountId)) issues.push("Entry references missing account: "+e.id);
     if(e.mode==="behalf" && !["plus","minus"].includes(e.behalfDirection)) issues.push("Invalid Behalf direction: "+e.id);
      if(e.mode==="behalf" && !["included","new","out"].includes(e.accountEffect)) issues.push("Invalid Held account effect: "+e.id);
     if(Number(e.amount)<=0) issues.push("Non-positive entry amount: "+e.id);
@@ -629,13 +635,17 @@ function openEntry(newMode){
   if(newMode==="behalf") behalfAction.value="plus";
   entryDate.value=today(); entryNote.value=""; entryPhoto.value=""; calc.entry="";
   entryAccount.innerHTML=activeOptions();
-  entryCategory.innerHTML=INCOME_CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
   changeEntryType(entryType.value); refreshCalc("entry"); entryModal.style.display="flex";
 }
 function changeEntryType(v){
   mode=v;
   const isBehalf=v==="behalf";
   entryCategoryWrap.style.display=isBehalf?"none":"block";
+  // Income and Expense each have their own category list (Held for Others/Behalf hides this
+  // field entirely). Re-populate it every time the type changes so Expense never shows the
+  // Income list (or vice versa) — previously this always loaded INCOME_CATEGORIES regardless
+  // of mode, both when opening a new entry and when switching type inside an open form.
+  if(!isBehalf) entryCategory.innerHTML=(v==="income"?INCOME_CATEGORIES:EXPENSE_CATEGORIES).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
   behalfAction.parentElement.style.display=isBehalf?"block":"none";
   entryTitle.textContent=isBehalf?(behalfAction.value==="minus"?"Return Behalf of Other's":"Receive Behalf of Other's"):(v==="income"?"Add Income":"Add Expense");
   entryNote.placeholder=isBehalf?"Who / source / purpose":"Optional";
@@ -877,8 +887,15 @@ function toggleAccount(id,active){
 /* ---------- Delete ---------- */
 async function deleteEditing(type){
   if(!confirm("Delete this record?"))return;
+  // Snapshot first so a storage failure can be rolled back — matches the safety pattern used
+  // for every add/edit save. Previously a failed saveData() here left the record permanently
+  // removed from memory (and, once anything else triggered a render, from the screen) even
+  // though nothing was actually persisted.
+  const previous=JSON.parse(JSON.stringify(data));
+  let deletedAttachmentKey="";
   if(type==="entry"){
-    const e=data.entries.find(x=>x.id===editState.id);if(e?.attachmentKey)await mediaDelete(e.attachmentKey);
+    const e=data.entries.find(x=>x.id===editState.id);
+    deletedAttachmentKey=e?.attachmentKey||"";
     data.entries=data.entries.filter(x=>x.id!==editState.id);closeModal("entryModal");
   }
   if(type==="transfer"){data.transfers=data.transfers.filter(x=>x.id!==editState.id);closeModal("transferModal");}
@@ -890,16 +907,27 @@ async function deleteEditing(type){
     if(Math.abs(balance(id))>0.000001)return alert("This account still has money. Transfer it to another account or adjust it to Rs 0 before deleting.");
     data.accounts=data.accounts.filter(x=>x.id!==id);closeModal("accountModal");
   }
-  saveData();
+  if(!saveData()){
+    data=previous;
+    try{ localStorage.setItem(STORE_KEY,JSON.stringify(data)); }catch(e){}
+    render();
+    return;
+  }
+  // The attachment is only removed from storage once the deletion itself is confirmed saved.
+  if(type==="entry" && deletedAttachmentKey) await mediaDelete(deletedAttachmentKey);
 }
 
 /* ---------- Backup / Clean History ---------- */
 /* ---------- Clean History / Month Summary ---------- */
 function cleanHistory(){
-  if(!confirm("Clean all transaction history? Active account balances will be kept as new starting balances.")) return;
+  if(!confirm("Clean all transaction history? Active account balances and any outstanding Held for Others balance will be kept as new starting figures.")) return;
   if(!confirm("This will permanently remove all Income, Expense, Behalf, Transfer and Adjustment history from this browser. Continue?")) return;
   try{
     const previous=JSON.parse(JSON.stringify(data));
+    // Outstanding Behalf-of-Other's liability must survive the clean the same way active account
+    // balances do. liabilityTotal() is derived entirely from mode:"behalf" entries, so wiping
+    // data.entries would otherwise silently zero out "Held for Others" too.
+    const outstandingLiability=liabilityTotal();
     data.accounts=data.accounts.map(a=>{
       if(a.active){
         return {...a,opening:Number(balance(a.id)||0)};
@@ -907,13 +935,21 @@ function cleanHistory(){
       return {...a};
     });
     data.entries=[]; data.transfers=[]; data.adjustments=[]; data.liabilities=[]; data.others=[];
+    if(outstandingLiability>0.000001){
+      data.entries.push({
+        id:uid(), mode:"behalf", behalfDirection:"plus", accountId:"",
+        category:"Behalf of Other's", amount:outstandingLiability, date:today(),
+        note:"Carried forward balance from before Clean History", created:new Date().toISOString(),
+        attachmentKey:"", accountEffect:"included"
+      });
+    }
     data.schemaVersion=SCHEMA_VERSION;
     if(!saveData()) {
       data=previous;
       try{ localStorage.setItem(STORE_KEY,JSON.stringify(data)); }catch(e){}
       throw new Error("Could not save the cleaned ledger.");
     }
-    alert("History cleaned successfully. Active account balances are now the new starting balances.");
+    alert("History cleaned successfully. Active account balances and any Held for Others balance are now the new starting figures.");
     render();
   }catch(err){
     console.error("cleanHistory",err);
@@ -1102,7 +1138,7 @@ if(summaryFromEl&&summaryToEl){
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("sw.js?v=41",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js?v=44",{updateViaCache:"none"});
       await reg.update();
     }catch(e){}
   });
