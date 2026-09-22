@@ -258,7 +258,7 @@ const CATEGORY_MIGRATION = {
   "Miscellaneous Personal":"Miscellaneous", "Miscellaneous":"Miscellaneous"
 };
 const STORE_KEY = "moneyManagerV5";
-const SCHEMA_VERSION = 46;
+const SCHEMA_VERSION = 47;
 
 const initialData = {
   schemaVersion:SCHEMA_VERSION,
@@ -339,7 +339,12 @@ function evalCalc(raw){
     let expectNumber=true;
     for(const t of tokens){
       if(expectNumber){
+        // A leading sign (before any number yet) is unary — "-36900" means "0 - 36900" and
+        // "+36900" means "0 + 36900". Only "-" was handled here; a leading "+" (exactly what
+        // the Adjust calculator's + button produces for a positive adjustment) fell through
+        // to the digit-only check below and always evaluated to 0.
         if(t==="-"){ nums.push(0); ops.push("-"); continue; }
+        if(t==="+"){ nums.push(0); ops.push("+"); continue; }
         if(!/^\d*\.?\d+$/.test(t)) return 0;
         nums.push(Number(t)); expectNumber=false;
       }else{
@@ -1327,11 +1332,11 @@ if(summaryFromEl&&summaryToEl){
   renderMonthSummary();
 }
 
-/* Fresh PWA update — schema/cache v46 */
+/* Fresh PWA update — schema/cache v47 */
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("sw.js?v=46",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js?v=47",{updateViaCache:"none"});
       await reg.update();
     }catch(e){}
   });
