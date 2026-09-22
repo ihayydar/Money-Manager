@@ -56,6 +56,7 @@ button{touch-action:manipulation}
 .warn{background:#fff7e7;border:1px solid #efdcae;border-radius:16px;padding:10px 12px;font-size:12px;color:#7f5716;margin-bottom:12px}
 
 .summaryPage{max-width:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.summaryTop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}.summaryTop .eyebrow{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}.summaryTop h2{font-size:24px;line-height:1.05;margin:3px 0 0;letter-spacing:-.035em}.summaryPeriod{font-size:11px;color:var(--muted);text-align:right;white-space:nowrap}.summaryHero{background:linear-gradient(135deg,#073f3a 0%,#0b5f55 55%,#14756a 100%);color:#fff;border-radius:24px;padding:18px;box-shadow:0 12px 28px rgba(7,63,58,.16);margin-bottom:12px}.summaryHero .heroLabel{font-size:11px;opacity:.78;font-weight:750;text-transform:uppercase;letter-spacing:.06em}.summaryHero .heroValue{display:block;font-size:32px;line-height:1.05;font-weight:900;letter-spacing:-.045em;margin:5px 0 3px}.summaryHero .heroSub{font-size:11px;opacity:.82}.summaryBalance{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}.summaryBalanceCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;box-shadow:0 4px 14px rgba(20,40,35,.04)}.summaryBalanceCard small{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.summaryBalanceCard b{display:block;font-size:19px;line-height:1.15;margin-top:5px;letter-spacing:-.02em}.summaryBalanceCard .date{font-size:10px;color:var(--muted);margin-top:4px}.summaryGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}.summaryMetric{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px}.summaryMetric small{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.summaryMetric b{display:block;font-size:18px;margin-top:5px}.summarySection{background:#fff;border:1px solid var(--line);border-radius:20px;padding:13px}.summarySection .head{margin-bottom:9px}.summarySection .head h3{font-size:14px}.summaryRow{padding:9px 2px;display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #edf1ef}.summaryRow:last-of-type{border-bottom:0}.summaryRow b{font-size:12px}.summaryRow .amt{font-size:12px}.summaryNote{font-size:10px;color:var(--muted);margin-top:10px;line-height:1.45}.summaryEmpty{padding:13px;text-align:center;color:var(--muted);background:#f8faf9;border:1px dashed var(--line);border-radius:14px;font-size:12px}
+.compareRow{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid #edf1ef}.compareRow:last-of-type{border-bottom:0}.compareLabel{font-size:11px;font-weight:800;color:var(--ink)}.compareBars{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 8px}.compareBarTrack{height:7px;border-radius:99px;background:#eef3f1;overflow:hidden}.compareBarTrack.prevTrack{opacity:.55}.compareBarFill{height:100%;border-radius:99px;background:var(--green2)}.compareBarFill.exp{background:var(--red)}.compareBarFill.prev{background:var(--muted)}.compareBarVal{font-size:11px;font-weight:800;white-space:nowrap}.compareBarVal.muted{color:var(--muted);font-weight:700}.compareDelta{font-size:10px;font-weight:850;text-align:right;white-space:nowrap}.compareDelta.good{color:var(--green2)}.compareDelta.bad{color:var(--red)}
 
 @media(max-width:360px){.app{padding-left:12px;padding-right:12px}.hero .big{font-size:31px}.quick{grid-template-columns:repeat(3,1fr)}.balanceStrip{grid-template-columns:1fr 1fr}}
 </style>
@@ -144,8 +145,29 @@ button{touch-action:manipulation}
   </div>
   <div id="accountList"></div>
   <div class="sec"><div class="head"><h3>Adjustment History</h3></div><div id="adjustmentList"></div></div>
+  <div class="sec"><div class="head"><h3>App Lock</h3></div><div class="card" id="appLockCard"></div></div>
   <div class="sec"><div class="head"><h3>Data Safety</h3></div><div class="card"><small>Clean all transaction history while keeping active account balances and any outstanding Held for Others balance as new starting figures.</small><button class="btn danger" onclick="cleanHistory()">Clean History</button></div></div>
 </section>
+</div>
+
+<div id="pinModal" class="modal"><div class="sheet">
+  <div class="drag"></div><h2 id="pinModalTitle">Set App Lock PIN</h2>
+  <div class="field" id="pinCurrentWrap" style="display:none"><label>Current PIN</label><input type="password" id="pinCurrent" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></div>
+  <div class="field"><label>New PIN (4–6 digits)</label><input type="password" id="pinNew" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></div>
+  <div class="field"><label>Confirm New PIN</label><input type="password" id="pinConfirm" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></div>
+  <div id="pinModalError" class="empty" style="display:none;color:var(--red);border-color:#f0d3d5;background:#fdf3f4;margin-bottom:11px"></div>
+  <button class="btn" onclick="savePin()">Save PIN</button>
+  <button class="btn secondary" onclick="closeModal('pinModal')">Cancel</button>
+</div></div>
+
+<div id="lockScreen" style="display:none;position:fixed;inset:0;z-index:999;background:linear-gradient(160deg,#073f3a 0%,#0b5f55 60%,#14756a 100%);color:#fff;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+  <div style="font-size:15px;font-weight:850;letter-spacing:.04em;opacity:.85;margin-bottom:4px">Money Manager</div>
+  <div style="font-size:20px;font-weight:900;margin-bottom:22px">Enter your PIN</div>
+  <input type="password" id="lockPinInput" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"
+    style="width:min(240px,80%);text-align:center;letter-spacing:.5em;font-size:22px;padding:14px 12px;border-radius:16px;border:none;background:rgba(255,255,255,.14);color:#fff;font-weight:800">
+  <div id="lockError" style="min-height:18px;font-size:12px;color:#ffd7d9;margin-top:10px;font-weight:700"></div>
+  <button class="btn" style="width:min(240px,80%);background:#fff;color:var(--green);margin-top:14px" onclick="attemptUnlock()">Unlock</button>
+  <button class="link" style="color:#fff;opacity:.75;margin-top:18px;background:none;border:none;font-size:12px" onclick="forgotPin()">Forgot PIN?</button>
 </div>
 
 <div class="nav">
@@ -163,7 +185,7 @@ button{touch-action:manipulation}
     <option value="income">Income</option><option value="expense">Expense</option><option value="behalf">Behalf of Other's</option>
   </select></div>
   <div class="field"><label>Behalf Action</label><select id="behalfAction" onchange="changeBehalfAction(this.value)"><option value="plus">Receive / Add</option><option value="minus">Return / Reduce</option></select></div>
-  <div class="field" id="behalfEffectWrap" style="display:none"><label>Account Effect</label><select id="behalfEffect" onchange="refreshEntryPreview()"><option value="included">Already included in account balance — do not add again</option><option value="new">New money entering account — add amount</option><option value="out">Money leaving account — subtract amount</option></select></div>
+  <div class="field" id="behalfEffectWrap" style="display:none"><label>Account Effect</label><select id="behalfEffect" onchange="behalfEffect.dataset.userSet='1';refreshEntryPreview()"><option value="included">Already included in account balance — do not add again</option><option value="new">New money entering account — add amount</option><option value="out">Money leaving account — subtract amount</option></select></div>
   <div class="field"><label>Account</label><select id="entryAccount" onchange="refreshEntryPreview()"></select></div>
   <div class="field" id="entryCategoryWrap"><label>Category</label><select id="entryCategory"></select></div>
   <div id="entryCalc"></div>
@@ -236,7 +258,7 @@ const CATEGORY_MIGRATION = {
   "Miscellaneous Personal":"Miscellaneous", "Miscellaneous":"Miscellaneous"
 };
 const STORE_KEY = "moneyManagerV5";
-const SCHEMA_VERSION = 44;
+const SCHEMA_VERSION = 46;
 
 const initialData = {
   schemaVersion:SCHEMA_VERSION,
@@ -246,7 +268,8 @@ const initialData = {
     {id:"jazz",name:"JazzCash",type:"Wallet",active:false,opening:0},
     {id:"easy",name:"Easypaisa",type:"Wallet",active:false,opening:0}
   ],
-  entries:[], liabilities:[], transfers:[], adjustments:[], others:[]
+  entries:[], liabilities:[], transfers:[], adjustments:[], others:[],
+  security:{enabled:false,pinHash:"",salt:""}
 };
 
 let data = (()=>{
@@ -357,6 +380,7 @@ function auditAndRepairData(){
   if(!Array.isArray(data.adjustments)){ data.adjustments=[]; changed=true; }
   if(!Array.isArray(data.liabilities)){ data.liabilities=[]; changed=true; }
   if(!Array.isArray(data.others)){ data.others=[]; changed=true; }
+  if(!data.security || typeof data.security!=="object"){ data.security={enabled:false,pinHash:"",salt:""}; changed=true; }
 
   const seen=new Set();
   data.accounts=data.accounts.filter(a=>{
@@ -632,7 +656,7 @@ function closeModal(id){ document.getElementById(id).style.display="none"; if(id
 function openEntry(newMode){
   mode=newMode; editState={type:null,id:null}; entryDeleteBtn.style.display="none"; entryViewPhoto.style.display="none";
   entryType.disabled=false; entryType.value=newMode==="expense"?"expense":newMode==="behalf"?"behalf":"income";
-  if(newMode==="behalf") behalfAction.value="plus";
+  if(newMode==="behalf"){ behalfAction.value="plus"; delete behalfEffect.dataset.userSet; behalfEffect.value="new"; }
   entryDate.value=today(); entryNote.value=""; entryPhoto.value=""; calc.entry="";
   entryAccount.innerHTML=activeOptions();
   changeEntryType(entryType.value); refreshCalc("entry"); entryModal.style.display="flex";
@@ -654,6 +678,12 @@ function changeEntryType(v){
 function changeBehalfAction(v){
   mode="behalf"; liabilityDirection=v;
   entryTitle.textContent=v==="plus"?"Receive Behalf of Other's":"Return Behalf of Other's";
+  // Receiving money on someone's behalf almost always means it's genuinely new money landing
+  // in the account, and returning it almost always means it's leaving the account — so default
+  // the Account Effect to match, instead of the previous always-"included" default, which
+  // silently kept the account balance unchanged unless the user noticed and changed it manually.
+  // Only auto-set this when the user hasn't already picked something themselves in this form.
+  if(!behalfEffect.dataset.userSet) behalfEffect.value=v==="plus"?"new":"out";
   refreshEntryPreview();
 }
 function editEntry(id){
@@ -676,9 +706,18 @@ function refreshEntryPreview(){
   if(mode==="income") { after=before+amount; detail=`${fmt(before)} + ${fmt(amount)} = ${fmt(after)}`; }
   else if(mode==="expense") { after=before-amount; detail=`${fmt(before)} − ${fmt(amount)} = ${fmt(after)}`; }
   else {
+    // The account balance change depends on the selected Account Effect (Included / New /
+    // Out), not on Receive-vs-Return — those are two independent choices (see entryDelta()).
+    // The preview previously always assumed Receive=+amount and Return=−amount regardless of
+    // what Account Effect was actually selected, so it could show a change that wouldn't
+    // really happen (or hide one that would).
+    const accountEffect=behalfEffect?.value||"included";
     const lb=liabilityTotal(txDate), la=liabilityDirection==="plus"?lb+amount:lb-amount;
-    after=liabilityDirection==="plus"?before+amount:before-amount;
-    detail=`<span><strong>Current Behalf: ${fmt(lb)}</strong></span><span><strong>${fmt(lb)} ${liabilityDirection==="plus"?"+":"−"} ${fmt(amount)} = ${fmt(la)}</strong></span><span>Account: ${fmt(before)} → ${fmt(after)} • Mature unchanged</span>`;
+    after=accountEffect==="included"?before:(accountEffect==="new"?before+amount:before-amount);
+    const liabilityDelta=liabilityDirection==="plus"?amount:-amount;
+    const matureDelta=(after-before)-liabilityDelta;
+    const matureNote=Math.abs(matureDelta)<0.005?"Mature unchanged":`Mature ${matureDelta>0?"+":"−"}${fmt(Math.abs(matureDelta))}`;
+    detail=`<span><strong>Current Behalf: ${fmt(lb)}</strong></span><span><strong>${fmt(lb)} ${liabilityDirection==="plus"?"+":"−"} ${fmt(amount)} = ${fmt(la)}</strong></span><span>Account: ${fmt(before)} → ${fmt(after)} • ${matureNote}</span>`;
   }
   p.innerHTML=detail;
 }
@@ -707,7 +746,11 @@ async function saveEntry(){
       if(previousKey && previousKey!==attachmentKey) await mediaDelete(previousKey);
     }catch(e){ return alert("Could not save photo. Try a smaller image."); }
   }
-  const payload={id,mode,behalfDirection:isBehalf?liabilityDirection:undefined,accountId:entryAccount.value,category:isBehalf?"Behalf of Other's":(CATEGORY_MIGRATION[entryCategory.value]||"Miscellaneous"),accountEffect,amount,date:txDate,note:entryNote.value.trim(),created:old?.created||new Date().toISOString(),attachmentKey};
+  // CATEGORY_MIGRATION only maps legacy EXPENSE category names — it has no entries for
+  // "Salary", "Business Income", etc., so running Income categories through it always fell
+  // through to the "Miscellaneous" fallback and silently overwrote whatever the user picked.
+  const savedCategory=isBehalf?"Behalf of Other's":(mode==="expense"?(CATEGORY_MIGRATION[entryCategory.value]||"Miscellaneous"):(entryCategory.value||"Miscellaneous"));
+  const payload={id,mode,behalfDirection:isBehalf?liabilityDirection:undefined,accountId:entryAccount.value,category:savedCategory,accountEffect,amount,date:txDate,note:entryNote.value.trim(),created:old?.created||new Date().toISOString(),attachmentKey};
   if(old) data.entries=data.entries.map(x=>x.id===id?payload:x); else data.entries.push(payload);
   const issues=auditReport();
   if(issues.length){
@@ -884,6 +927,91 @@ function toggleAccount(id,active){
   render();
 }
 
+/* ---------- App Lock (PIN) ---------- */
+// Screen-lock only, not encryption: the ledger itself is still plain JSON in localStorage.
+// This gates the UI so a casual glance at the phone doesn't show your figures — it does not
+// protect against someone with direct access to the browser's stored data.
+function randomSalt(){
+  const arr=new Uint8Array(16); crypto.getRandomValues(arr);
+  return Array.from(arr).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+async function hashPin(pin,salt){
+  const enc=new TextEncoder().encode("mm-pin:"+salt+":"+pin);
+  const digest=await crypto.subtle.digest("SHA-256",enc);
+  return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function renderAppLockCard(){
+  const card=document.getElementById("appLockCard"); if(!card) return;
+  if(data.security?.enabled){
+    card.innerHTML=`<small>App Lock is on. A PIN is required every time you open Money Manager.</small>
+      <button class="btn secondary" onclick="openPinModal('change')">Change PIN</button>
+      <button class="btn danger" onclick="turnOffAppLock()">Turn Off App Lock</button>`;
+  } else {
+    card.innerHTML=`<small>Set a PIN so Money Manager asks for it every time it's opened, keeping your figures private if someone else picks up your phone.</small>
+      <button class="btn" onclick="openPinModal('set')">Set PIN</button>`;
+  }
+}
+function openPinModal(kind){
+  document.getElementById("pinModalTitle").textContent=kind==="change"?"Change App Lock PIN":"Set App Lock PIN";
+  document.getElementById("pinCurrentWrap").style.display=kind==="change"?"block":"none";
+  pinCurrent.value=""; pinNew.value=""; pinConfirm.value="";
+  const err=document.getElementById("pinModalError"); err.style.display="none"; err.textContent="";
+  pinModal.dataset.kind=kind;
+  pinModal.style.display="flex";
+}
+async function savePin(){
+  const err=document.getElementById("pinModalError");
+  const showErr=(m)=>{ err.textContent=m; err.style.display="block"; };
+  const kind=pinModal.dataset.kind;
+  if(kind==="change"){
+    if(!data.security?.pinHash) return showErr("No PIN is currently set.");
+    const curHash=await hashPin(pinCurrent.value.trim(),data.security.salt);
+    if(curHash!==data.security.pinHash) return showErr("Current PIN is incorrect.");
+  }
+  const p1=pinNew.value.trim(), p2=pinConfirm.value.trim();
+  if(!/^\d{4,6}$/.test(p1)) return showErr("PIN must be 4–6 digits.");
+  if(p1!==p2) return showErr("PINs do not match.");
+  const salt=randomSalt();
+  const previous=JSON.parse(JSON.stringify(data));
+  data.security={enabled:true,pinHash:await hashPin(p1,salt),salt};
+  if(!saveData()){ data=previous; try{ localStorage.setItem(STORE_KEY,JSON.stringify(data)); }catch(e){} render(); return; }
+  closeModal("pinModal");
+  renderAppLockCard();
+}
+function turnOffAppLock(){
+  if(!confirm("Turn off App Lock? Money Manager will no longer ask for a PIN when opened.")) return;
+  const previous=JSON.parse(JSON.stringify(data));
+  data.security={enabled:false,pinHash:"",salt:""};
+  if(!saveData()){ data=previous; try{ localStorage.setItem(STORE_KEY,JSON.stringify(data)); }catch(e){} render(); return; }
+  renderAppLockCard();
+}
+function lockApp(){
+  if(!data.security?.enabled || !data.security?.pinHash) return;
+  document.getElementById("lockError").textContent="";
+  lockPinInput.value="";
+  lockScreen.style.display="flex";
+  setTimeout(()=>lockPinInput?.focus(),50);
+}
+function unlockApp(){
+  lockScreen.style.display="none";
+}
+async function attemptUnlock(){
+  const entered=lockPinInput.value.trim();
+  const errEl=document.getElementById("lockError");
+  if(!entered){ errEl.textContent="Enter your PIN."; return; }
+  const hash=await hashPin(entered,data.security.salt);
+  if(hash===data.security.pinHash){ unlockApp(); }
+  else { errEl.textContent="Incorrect PIN. Try again."; lockPinInput.value=""; lockPinInput.focus(); }
+}
+function forgotPin(){
+  if(!confirm("This removes App Lock so you can get back in. Your financial data is NOT deleted — only the PIN is reset, and you can set a new one afterward."))return;
+  const previous=JSON.parse(JSON.stringify(data));
+  data.security={enabled:false,pinHash:"",salt:""};
+  if(!saveData()){ data=previous; try{ localStorage.setItem(STORE_KEY,JSON.stringify(data)); }catch(e){} }
+  unlockApp();
+  render();
+}
+
 /* ---------- Delete ---------- */
 async function deleteEditing(type){
   if(!confirm("Delete this record?"))return;
@@ -961,6 +1089,28 @@ function monthName(value){
   const [y,m]=value.split("-").map(Number);
   return new Date(y,m-1,1).toLocaleDateString("en-PK",{month:"long",year:"numeric"});
 }
+function periodTotals(from,to){
+  let income=0, expense=0, cats={};
+  data.entries.forEach(e=>{
+    if(!e.date || e.date<from || e.date>to) return;
+    // Only the user's own income/expenses are included.
+    // Behalf of Other's entries are deliberately excluded.
+    if(e.mode==="income") income+=Number(e.amount||0);
+    else if(e.mode==="expense"){
+      const cat=CATEGORY_MIGRATION[e.category]||e.category||"Miscellaneous";
+      const amount=Number(e.amount||0);
+      expense+=amount;
+      cats[cat]=(cats[cat]||0)+amount;
+    }
+  });
+  return {income,expense,cats};
+}
+function periodDelta(cur,prev){
+  if(prev<=0.000001) return cur>0.000001 ? {text:"New",dir:"up"} : {text:"—",dir:"flat"};
+  const pct=((cur-prev)/prev)*100;
+  if(Math.abs(pct)<0.05) return {text:"No change",dir:"flat"};
+  return {text:(pct>0?"▲ ":"▼ ")+Math.abs(pct).toFixed(0)+"%", dir:pct>0?"up":"down"};
+}
 function renderMonthSummary(){
   const fromEl=document.getElementById("summaryFromDate");
   const toEl=document.getElementById("summaryToDate");
@@ -983,19 +1133,30 @@ function renderMonthSummary(){
     return;
   }
 
-  let income=0, expense=0, cats={};
-  data.entries.forEach(e=>{
-    if(!e.date || e.date<from || e.date>to) return;
-    // Only the user's own income/expenses are included.
-    // Behalf of Other's entries are deliberately excluded.
-    if(e.mode==="income") income+=Number(e.amount||0);
-    else if(e.mode==="expense"){
-      const cat=CATEGORY_MIGRATION[e.category]||e.category||"Miscellaneous";
-      const amount=Number(e.amount||0);
-      expense+=amount;
-      cats[cat]=(cats[cat]||0)+amount;
-    }
-  });
+  const {income,expense,cats}=periodTotals(from,to);
+
+  // Previous period: same calendar days, shifted back exactly one month (e.g. 1–9 Sep
+  // compares against 1–9 Aug, not just "the 9 days before Sep 1") — this is what "month
+  // vs last month" naturally means, especially for the common "month so far" range.
+  // Day-of-month is clamped to the target month's actual length (e.g. 31 Mar -> 28/29 Feb).
+  const shiftMonthsBack=(dateObj)=>{
+    const d=new Date(dateObj);
+    const originalDay=d.getDate();
+    d.setDate(1);
+    d.setMonth(d.getMonth()-1);
+    const daysInTargetMonth=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+    d.setDate(Math.min(originalDay,daysInTargetMonth));
+    return d;
+  };
+  const fromDateObj=new Date(from+"T00:00:00"), toDateObj=new Date(to+"T00:00:00");
+  const prevFrom=shiftMonthsBack(fromDateObj), prevTo=shiftMonthsBack(toDateObj);
+  const prevFromStr=prevFrom.toISOString().slice(0,10), prevToStr=prevTo.toISOString().slice(0,10);
+  const prevTotals=prevFromStr<=prevToStr ? periodTotals(prevFromStr,prevToStr) : {income:0,expense:0,cats:{}};
+  const incomeDelta=periodDelta(income,prevTotals.income);
+  const expenseDelta=periodDelta(expense,prevTotals.expense);
+  const compareMax=Math.max(income,prevTotals.income,expense,prevTotals.expense,1);
+  const barPct=v=>Math.max(3,Math.round((v/compareMax)*100));
+  const prevPeriodLabel=`${new Date(prevFromStr+"T00:00:00").toLocaleDateString("en-PK",{day:"2-digit",month:"short"})} → ${new Date(prevToStr+"T00:00:00").toLocaleDateString("en-PK",{day:"2-digit",month:"short",year:"numeric"})}`;
 
   const net=income-expense;
   const rows=Object.entries(cats).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
@@ -1037,6 +1198,29 @@ function renderMonthSummary(){
       <div class="summaryGrid">
         <div class="summaryMetric"><small>Total Income</small><b>${fmt(income)}</b></div>
         <div class="summaryMetric"><small>Total Expenses</small><b>${fmt(expense)}</b></div>
+      </div>
+      <div class="summarySection"><div class="head"><h3>vs Previous Period</h3></div>
+        <div class="compareRow">
+          <div class="compareLabel">Income</div>
+          <div class="compareBars">
+            <div class="compareBarTrack"><div class="compareBarFill cur" style="width:${barPct(income)}%"></div></div>
+            <div class="compareBarVal">${fmt(income)}</div>
+            <div class="compareBarTrack prevTrack"><div class="compareBarFill prev" style="width:${barPct(prevTotals.income)}%"></div></div>
+            <div class="compareBarVal muted">${fmt(prevTotals.income)}</div>
+          </div>
+          <div class="compareDelta ${incomeDelta.dir==='up'?'good':incomeDelta.dir==='down'?'bad':''}">${incomeDelta.text}</div>
+        </div>
+        <div class="compareRow">
+          <div class="compareLabel">Expense</div>
+          <div class="compareBars">
+            <div class="compareBarTrack"><div class="compareBarFill cur exp" style="width:${barPct(expense)}%"></div></div>
+            <div class="compareBarVal">${fmt(expense)}</div>
+            <div class="compareBarTrack prevTrack"><div class="compareBarFill prev" style="width:${barPct(prevTotals.expense)}%"></div></div>
+            <div class="compareBarVal muted">${fmt(prevTotals.expense)}</div>
+          </div>
+          <div class="compareDelta ${expenseDelta.dir==='up'?'bad':expenseDelta.dir==='down'?'good':''}">${expenseDelta.text}</div>
+        </div>
+        <div class="summaryNote">Compared with the same days one month earlier (${esc(prevPeriodLabel)}).</div>
       </div>
       <div class="summarySection"><div class="head"><h3>Expense Breakdown</h3></div>
         ${rowsHtml}
@@ -1107,6 +1291,7 @@ function render(){
   const adjustmentListEl=document.getElementById("adjustmentList");
   if(accountListEl) accountListEl.innerHTML=data.accounts.map(a=>`<div class="row"><div class="rowMain"><div class="rowText"><b>${esc(a.name)}</b><small>${esc(a.type)} • ${fmt(balance(a.id))}</small></div><div class="actions"><button class="tiny" onclick="editAccount(${jsq(a.id)})">Edit</button>${a.active?`<button class="tiny" onclick="openAdjust();adjustAccount.value=${jsq(a.id)};refreshCalc('adjust')">Adjust</button>`:""}<input class="toggle" type="checkbox" ${a.active?"checked":""} onchange="toggleAccount(${jsq(a.id)},this.checked)"></div></div></div>`).join("") || `<div class="empty">No account heads found. tap + Add to create one.</div>`;
   if(adjustmentListEl) adjustmentListEl.innerHTML=data.adjustments.slice().sort((a,b)=>((b.date)+(b.created||"")).localeCompare((a.date)+(a.created||""))).map(historyRow).join("")||'<div class="empty">No adjustments yet</div>';
+  renderAppLockCard();
 
   renderStatus(); if(document.getElementById("activity").classList.contains("active"))renderHistory();
 }
@@ -1125,6 +1310,14 @@ transferFrom.addEventListener("change",()=>refreshCalc("transfer"));transferTo.a
 adjustAccount.addEventListener("change",()=>refreshCalc("adjust"));
 
 render();
+if(data.security?.enabled) lockApp();
+lockPinInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter") attemptUnlock(); });
+[pinCurrent,pinNew,pinConfirm].forEach(el=>el?.addEventListener("keydown",(e)=>{ if(e.key==="Enter") savePin(); }));
+// Re-lock if the app is put in the background or the phone is switched away from — so someone
+// picking the phone up later doesn't land on an already-unlocked screen.
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden && data.security?.enabled) lockApp();
+});
 const summaryFromEl=document.getElementById("summaryFromDate");
 const summaryToEl=document.getElementById("summaryToDate");
 if(summaryFromEl&&summaryToEl){
@@ -1134,11 +1327,11 @@ if(summaryFromEl&&summaryToEl){
   renderMonthSummary();
 }
 
-/* Fresh PWA update — schema/cache v39 */
+/* Fresh PWA update — schema/cache v46 */
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("sw.js?v=44",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js?v=46",{updateViaCache:"none"});
       await reg.update();
     }catch(e){}
   });
