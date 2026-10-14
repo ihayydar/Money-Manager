@@ -661,7 +661,7 @@ function closeModal(id){ document.getElementById(id).style.display="none"; if(id
 function openEntry(newMode){
   mode=newMode; editState={type:null,id:null}; entryDeleteBtn.style.display="none"; entryViewPhoto.style.display="none";
   entryType.disabled=false; entryType.value=newMode==="expense"?"expense":newMode==="behalf"?"behalf":"income";
-  if(newMode==="behalf"){ behalfAction.value="plus"; delete behalfEffect.dataset.userSet; behalfEffect.value="new"; }
+  if(newMode==="behalf"){ behalfAction.value="plus"; liabilityDirection="plus"; delete behalfEffect.dataset.userSet; behalfEffect.value="included"; }
   entryDate.value=today(); entryNote.value=""; entryPhoto.value=""; calc.entry="";
   entryAccount.innerHTML=activeOptions();
   changeEntryType(entryType.value); refreshCalc("entry"); entryModal.style.display="flex";
@@ -676,6 +676,8 @@ function changeEntryType(v){
   // of mode, both when opening a new entry and when switching type inside an open form.
   if(!isBehalf) entryCategory.innerHTML=(v==="income"?INCOME_CATEGORIES:EXPENSE_CATEGORIES).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
   behalfAction.parentElement.style.display=isBehalf?"block":"none";
+  if(isBehalf && !behalfEffect.dataset.userSet) behalfEffect.value=behalfAction.value==="minus"?"out":"included";
+  behalfEffectWrap.style.display=(isBehalf && behalfAction.value!=="minus")?"block":"none";
   entryTitle.textContent=isBehalf?(behalfAction.value==="minus"?"Return Behalf of Other's":"Receive Behalf of Other's"):(v==="income"?"Add Income":"Add Expense");
   entryNote.placeholder=isBehalf?"Who / source / purpose":"Optional";
   refreshEntryPreview();
@@ -688,7 +690,12 @@ function changeBehalfAction(v){
   // the Account Effect to match, instead of the previous always-"included" default, which
   // silently kept the account balance unchanged unless the user noticed and changed it manually.
   // Only auto-set this when the user hasn't already picked something themselves in this form.
-  if(!behalfEffect.dataset.userSet) behalfEffect.value=v==="plus"?"new":"out";
+  // Default is "included": the received money is normally already part of the account balance,
+  // so it must NOT be added again. The user can switch to "new" from the visible Account Effect
+  // field when it really is fresh money. Return/Reduce always takes the money out of the account.
+  if(v==="minus") behalfEffect.value="out";
+  else if(!behalfEffect.dataset.userSet || behalfEffect.value==="out") { behalfEffect.value="included"; delete behalfEffect.dataset.userSet; }
+  behalfEffectWrap.style.display=v==="plus"?"block":"none";
   refreshEntryPreview();
 }
 function editEntry(id){
@@ -1332,11 +1339,11 @@ if(summaryFromEl&&summaryToEl){
   renderMonthSummary();
 }
 
-/* Fresh PWA update — schema/cache v47 */
+/* Fresh PWA update — schema/cache v48 */
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("sw.js?v=47",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js?v=48",{updateViaCache:"none"});
       await reg.update();
     }catch(e){}
   });
