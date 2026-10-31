@@ -45,6 +45,7 @@ button{touch-action:manipulation}
 .nav{position:fixed;left:0;transform:none;bottom:0;width:100%;max-width:560px;right:0;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 6px calc(env(safe-area-inset-bottom) + 8px);z-index:20}
 .nav button{border:0;background:transparent;color:#7b8985;font-size:10px;font-weight:750;padding:7px 3px;border-radius:11px}.nav span{display:block;font-size:20px;line-height:21px}.nav .active{background:var(--soft);color:var(--green)}
 .modal{display:none;position:fixed;inset:0;background:rgba(10,25,22,.38);align-items:flex-end;justify-content:center;z-index:50}.sheet{width:min(560px,100%);min-width:0;background:#fff;border-radius:28px 28px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);max-height:92vh;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;touch-action:pan-y}.drag{width:44px;height:5px;background:#dfe6e3;border-radius:99px;margin:0 auto 14px}.sheet h2{font-size:21px;margin:0 0 12px}
+.bchoices{display:grid;gap:8px}.bchoice{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:12px 14px}.bchoice b{font-size:14px;color:var(--ink)}.bchoice small{font-size:12px;line-height:1.35;color:var(--muted);font-weight:500}.bchoice.active{border-color:var(--green);background:var(--soft)}.bchoice.active b{color:var(--green)}
 .field{margin:11px 0}.field label{display:block;color:var(--muted);font-size:12px;font-weight:750;margin:0 0 6px 2px}input,select{width:100%;max-width:100%;border:1px solid var(--line);border-radius:15px;padding:13px 12px;background:#fff}
 .btn{width:100%;border:0;border-radius:16px;padding:13px;font-size:15px;font-weight:850;margin-top:8px}.primary{background:var(--green);color:#fff}.secondary{background:#edf2f0;color:#34413e}.danger{background:#fff0f0;color:var(--red)}
 .calc{background:#f8faf9;border:1px solid var(--line);border-radius:20px;padding:12px;margin:10px 0}.display{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;text-align:right;min-width:0;overflow:hidden}.display small{color:var(--muted);font-size:11px}.display b{display:block;font-size:30px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.calcExpression{color:var(--ink-soft);font-size:12px;font-weight:750;min-height:18px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.preview{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:12px;flex-wrap:wrap}.preview span{color:var(--muted)}.preview strong{color:var(--ink)}
@@ -74,7 +75,7 @@ button{touch-action:manipulation}
     <div class="big" id="homeMature">Rs 0</div>
     <div class="heroGrid">
       <div class="mini"><small>Total Accounts</small><b id="homeTotalAccounts">Rs 0</b></div>
-      <div class="mini"><small>Held for Others</small><b id="homeLiabilities">Rs 0</b></div>
+      <div class="mini" onclick="openHeld()" style="cursor:pointer"><small>Held for Others ›</small><b id="homeLiabilities">Rs 0</b></div>
     </div>
   </div>
 
@@ -88,7 +89,7 @@ button{touch-action:manipulation}
     <div class="quick">
       <button onclick="openEntry('income')"><i class="ig">＋</i>Income</button>
       <button onclick="openEntry('expense')"><i class="ir">−</i>Expense</button>
-      <button onclick="openEntry('behalf')"><i class="ia">±</i>Behalf of Other's</button>
+      <button onclick="openEntry('behalf')"><i class="ia">±</i>Held for Others</button>
       <button onclick="openTransfer()"><i class="ig">⇄</i>Transfer</button>
       <button onclick="openAdjust()"><i class="iv">↻</i>Adjust</button>
       <button onclick="go('activity',1)"><i class="iv">☷</i>History</button>
@@ -107,7 +108,7 @@ button{touch-action:manipulation}
     <button class="chip active" data-filter="all">All</button>
     <button class="chip" data-filter="income">Income</button>
     <button class="chip" data-filter="expense">Expense</button>
-    <button class="chip" data-filter="behalf">Behalf of Other's</button>
+    <button class="chip" data-filter="behalf">Held for Others</button>
     <button class="chip" data-filter="transfer">Transfer</button>
     <button class="chip" data-filter="adjust">Adjust</button>
   </div>
@@ -116,7 +117,7 @@ button{touch-action:manipulation}
 
 <section id="reports" class="screen">
   <div class="title">Month-End Summary</div>
-  <div class="sub">Your income and main expenses for the selected month. Behalf of Other's money is not included.</div>
+  <div class="sub">Your income and main expenses for the selected month. Held for Others money is not included.</div>
   <div class="card">
     <div class="field"><label>From Date</label><input id="summaryFromDate" type="date"></div>
     <div class="field"><label>To Date</label><input id="summaryToDate" type="date"></div>
@@ -130,7 +131,7 @@ button{touch-action:manipulation}
   <div class="field"><label>Date</label><input id="statusDate" type="date"></div>
   <div class="sumgrid">
     <div class="sum"><small>Total Accounts</small><b id="statusAccountsTotal">₨ 0</b></div>
-    <div class="sum"><small>Behalf of Other's</small><b id="statusLiability">₨ 0</b></div>
+    <div class="sum"><small>Held for Others</small><b id="statusLiability">₨ 0</b></div>
     <div class="sum"><small>Mature</small><b id="statusMature">₨ 0</b></div>
     <div class="sum"><small>Expenses</small><b id="statusExpenseTotal">₨ 0</b></div>
   </div>
@@ -182,10 +183,18 @@ button{touch-action:manipulation}
 <div id="entryModal" class="modal"><div class="sheet">
   <div class="drag"></div><h2 id="entryTitle">Add Entry</h2>
   <div class="field"><label>Entry Type</label><select id="entryType" onchange="changeEntryType(this.value)">
-    <option value="income">Income</option><option value="expense">Expense</option><option value="behalf">Behalf of Other's</option>
+    <option value="income">Income</option><option value="expense">Expense</option><option value="behalf">Held for Others</option>
   </select></div>
+  <div class="field" id="behalfChoiceWrap" style="display:none"><label>Receive or Return?</label>
+    <div class="bchoices" style="grid-template-columns:1fr 1fr">
+      <button type="button" class="bchoice" data-c="recv_new" onclick="pickBehalf('recv_new')"><b>＋ Receive</b><small>Money comes into this account. Account ↑  Held ↑</small></button>
+      <button type="button" class="bchoice" data-c="ret" onclick="pickBehalf('ret')"><b>− Return</b><small>Money goes out of this account. Account ↓  Held ↓</small></button>
+    </div>
+  </div>
+  <div id="behalfLegacy" style="display:none">
   <div class="field"><label>Behalf Action</label><select id="behalfAction" onchange="changeBehalfAction(this.value)"><option value="plus">Receive / Add</option><option value="minus">Return / Reduce</option></select></div>
   <div class="field" id="behalfEffectWrap" style="display:none"><label>Account Effect</label><select id="behalfEffect" onchange="behalfEffect.dataset.userSet='1';refreshEntryPreview()"><option value="included">Already included in account balance — do not add again</option><option value="new">New money entering account — add amount</option><option value="out">Money leaving account — subtract amount</option></select></div>
+  </div>
   <div class="field"><label>Account</label><select id="entryAccount" onchange="refreshEntryPreview()"></select></div>
   <div class="field" id="entryCategoryWrap"><label>Category</label><select id="entryCategory"></select></div>
   <div id="entryCalc"></div>
@@ -239,6 +248,21 @@ button{touch-action:manipulation}
 </div></div>
 
 <!-- Photo viewer -->
+<div id="heldModal" class="modal"><div class="sheet">
+  <div class="drag"></div><h2>Held for Others</h2>
+  <div class="sumgrid">
+    <div class="sum"><small>Held now</small><b id="heldNow">₨ 0</b></div>
+    <div class="sum"><small>Total received</small><b id="heldIn">₨ 0</b></div>
+    <div class="sum"><small>Total returned</small><b id="heldOut">₨ 0</b></div>
+    <div class="sum"><small>Entries</small><b id="heldCount">0</b></div>
+  </div>
+  <div class="bchoices" style="grid-template-columns:1fr 1fr;margin:12px 0">
+    <button type="button" class="bchoice" onclick="heldNew('plus')"><b>＋ Receive</b></button>
+    <button type="button" class="bchoice" id="heldReturnBtn" onclick="heldNew('minus')"><b>− Return</b></button>
+  </div>
+  <div id="heldList"></div>
+  <button class="btn secondary" onclick="closeModal('heldModal')">Close</button>
+</div></div>
 <div id="photoModal" class="modal"><div class="sheet">
   <div class="drag"></div><h2>Receipt / Photo</h2>
   <img id="photoPreview" class="photoPreview" alt="Attached receipt or photo">
@@ -661,7 +685,7 @@ function closeModal(id){ document.getElementById(id).style.display="none"; if(id
 function openEntry(newMode){
   mode=newMode; editState={type:null,id:null}; entryDeleteBtn.style.display="none"; entryViewPhoto.style.display="none";
   entryType.disabled=false; entryType.value=newMode==="expense"?"expense":newMode==="behalf"?"behalf":"income";
-  if(newMode==="behalf"){ behalfAction.value="plus"; liabilityDirection="plus"; delete behalfEffect.dataset.userSet; behalfEffect.value="included"; }
+  behalfChoice="recv_new"; behalfAction.value="plus"; liabilityDirection="plus"; behalfEffect.value="new";
   entryDate.value=today(); entryNote.value=""; entryPhoto.value=""; calc.entry="";
   entryAccount.innerHTML=activeOptions();
   changeEntryType(entryType.value); refreshCalc("entry"); entryModal.style.display="flex";
@@ -675,16 +699,49 @@ function changeEntryType(v){
   // Income list (or vice versa) — previously this always loaded INCOME_CATEGORIES regardless
   // of mode, both when opening a new entry and when switching type inside an open form.
   if(!isBehalf) entryCategory.innerHTML=(v==="income"?INCOME_CATEGORIES:EXPENSE_CATEGORIES).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
-  behalfAction.parentElement.style.display=isBehalf?"block":"none";
-  if(isBehalf && !behalfEffect.dataset.userSet) behalfEffect.value=behalfAction.value==="minus"?"out":"included";
-  behalfEffectWrap.style.display=(isBehalf && behalfAction.value!=="minus")?"block":"none";
-  entryTitle.textContent=isBehalf?(behalfAction.value==="minus"?"Return Behalf of Other's":"Receive Behalf of Other's"):(v==="income"?"Add Income":"Add Expense");
-  entryNote.placeholder=isBehalf?"Who / source / purpose":"Optional";
+  behalfChoiceWrap.style.display=isBehalf?"block":"none";
+  if(isBehalf){ const o=BEHALF_CHOICES[behalfChoice||(behalfChoice="recv_new")]; liabilityDirection=o.dir; behalfAction.value=o.dir; behalfEffect.value=o.eff; syncBehalfChoiceUI(); }
+  entryTitle.textContent=isBehalf?(behalfChoice?BEHALF_CHOICES[behalfChoice].title:"Held for Others"):(v==="income"?"Add Income":"Add Expense");
+  entryNote.placeholder=isBehalf?"Whose money / purpose":"Optional";
   refreshEntryPreview();
+}
+let behalfChoice="";
+const BEHALF_CHOICES={
+  recv_new:{dir:"plus",eff:"new",title:"Receive — Held for Others"},
+  ret:{dir:"minus",eff:"out",title:"Return — Held for Others"}
+};
+function syncBehalfChoiceUI(){ document.querySelectorAll(".bchoice").forEach(b=>b.classList.toggle("active",b.dataset.c===behalfChoice)); }
+function pickBehalf(c){
+  const o=BEHALF_CHOICES[c]; if(!o) return;
+  behalfChoice=c; mode="behalf"; liabilityDirection=o.dir;
+  behalfAction.value=o.dir; behalfEffect.value=o.eff; // hidden legacy fields keep the accounting engine unchanged
+  entryTitle.textContent=o.title; syncBehalfChoiceUI(); refreshEntryPreview();
+}
+/* ---------- Held for Others tracker ---------- */
+function openHeld(){ renderHeld(); heldModal.style.display="flex"; }
+function heldNew(dir){
+  const held=liabilityTotal();
+  if(dir==="minus" && held<=0) return alert("Nothing is held for others right now.");
+  closeModal("heldModal"); openEntry("behalf");
+  if(dir==="minus") pickBehalf("ret");
+}
+function renderHeld(){
+  const rows=data.entries.filter(e=>e.mode==="behalf").slice().sort((a,b)=>((a.date)+(a.created||"")).localeCompare((b.date)+(b.created||"")));
+  let run=0, inn=0, out=0; const effLabel={included:"already in balance",new:"new money",out:"paid out"};
+  const items=rows.map(e=>{
+    const amt=Number(e.amount||0), plus=e.behalfDirection==="plus";
+    run+=plus?amt:-amt; if(plus) inn+=amt; else out+=amt;
+    const a=acc(e.accountId);
+    const receipt=e.attachmentKey?`<button class="tiny" onclick="showPhotoByKey(${jsq(e.attachmentKey)})">📎</button>`:"";
+    return `<div class="row"><div class="rowMain"><div class="rowText"><b>${plus?"Received":"Returned"}${e.note?" — "+esc(e.note):""}</b><small>${esc(e.date)} • ${esc(a?.name||"No account")} • ${effLabel[e.accountEffect]||""} • Held after: ${fmt(Math.max(0,run))}</small></div><div class="amt loan">${plus?"+":"−"}${fmt(amt)}</div></div><div class="actions">${receipt}</div></div>`;
+  }).reverse();
+  heldNow.textContent=fmt(Math.max(0,run)); heldIn.textContent=fmt(inn); heldOut.textContent=fmt(out); heldCount.textContent=String(rows.length);
+  heldReturnBtn.style.opacity=run>0?"1":".45";
+  heldList.innerHTML=items.join("")||'<div class="empty">Nothing recorded yet</div>';
 }
 function changeBehalfAction(v){
   mode="behalf"; liabilityDirection=v;
-  entryTitle.textContent=v==="plus"?"Receive Behalf of Other's":"Return Behalf of Other's";
+  entryTitle.textContent=v==="plus"?"Receive — Held for Others":"Return — Held for Others";
   // Receiving money on someone's behalf almost always means it's genuinely new money landing
   // in the account, and returning it almost always means it's leaving the account — so default
   // the Account Effect to match, instead of the previous always-"included" default, which
@@ -704,7 +761,7 @@ function editEntry(id){
   mode=e.mode; editState={type:"entry",id}; entryDeleteBtn.style.display="block"; entryViewPhoto.style.display=e.attachmentKey?"inline-flex":"none";
   entryType.value=mode; entryType.disabled=true; behalfAction.value="plus";
   entryTitle.textContent=mode==="income"?"Edit Income":"Edit Expense";
-  entryCategoryWrap.style.display="block"; behalfAction.parentElement.style.display="none";
+  entryCategoryWrap.style.display="block"; behalfChoiceWrap.style.display="none";
   entryAccount.innerHTML=data.accounts.filter(a=>a.active||a.id===e.accountId).map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join("");
   entryAccount.value=e.accountId;
   entryCategory.innerHTML=(mode==="income"?INCOME_CATEGORIES:EXPENSE_CATEGORIES).map(c=>`<option value="${esc(c)}" ${c===e.category?"selected":""}>${esc(c)}</option>`).join("");
@@ -715,6 +772,7 @@ function refreshEntryPreview(){
   if(!accountId){p.innerHTML='<span>Select an account</span>';return;}
   const before=balance(accountId,txDate,editState.type==="entry"?{type:"entry",id:editState.id}:null);
   let after=before, detail="";
+  if(mode==="behalf" && !behalfChoice){ p.innerHTML='<span>Choose Receive or Return above</span>'; return; }
   if(mode==="income") { after=before+amount; detail=`${fmt(before)} + ${fmt(amount)} = ${fmt(after)}`; }
   else if(mode==="expense") { after=before-amount; detail=`${fmt(before)} − ${fmt(amount)} = ${fmt(after)}`; }
   else {
@@ -729,11 +787,12 @@ function refreshEntryPreview(){
     const liabilityDelta=liabilityDirection==="plus"?amount:-amount;
     const matureDelta=(after-before)-liabilityDelta;
     const matureNote=Math.abs(matureDelta)<0.005?"Mature unchanged":`Mature ${matureDelta>0?"+":"−"}${fmt(Math.abs(matureDelta))}`;
-    detail=`<span><strong>Current Behalf: ${fmt(lb)}</strong></span><span><strong>${fmt(lb)} ${liabilityDirection==="plus"?"+":"−"} ${fmt(amount)} = ${fmt(la)}</strong></span><span>Account: ${fmt(before)} → ${fmt(after)} • ${matureNote}</span>`;
+    detail=`<span><strong>Held for Others now: ${fmt(lb)}</strong></span><span><strong>${fmt(lb)} ${liabilityDirection==="plus"?"+":"−"} ${fmt(amount)} = ${fmt(la)}</strong></span><span>Account: ${fmt(before)} → ${fmt(after)} • ${matureNote}</span>`;
   }
   p.innerHTML=detail;
 }
 async function saveEntry(){
+  if(mode==="behalf" && !behalfChoice) return alert("Choose Receive or Return.");
   const amount=evalCalc(calc.entry); if(amount<=0)return alert("Enter amount."); if(!entryAccount.value)return alert("Select an account.");
   const txDate=entryDate.value||today();
   const isBehalf=mode==="behalf";
@@ -744,7 +803,7 @@ async function saveEntry(){
    if(accountDelta<0 && Math.abs(accountDelta)>before) return alert("This account does not have enough balance on this date.");
   if(isBehalf && liabilityDirection==="minus"){
     const outstanding=liabilityTotal(txDate,exclude);
-    if(amount>outstanding)return alert(`Return cannot exceed the outstanding Behalf amount of ${heroFmt(outstanding)}.`);
+    if(amount>outstanding)return alert(`Return cannot exceed the outstanding Held for Others amount of ${heroFmt(outstanding)}.`);
   }
   const old=editState.type==="entry"?data.entries.find(x=>x.id===editState.id):null;
   const id=old?.id||uid(); let attachmentKey=old?.attachmentKey||"";
@@ -1236,7 +1295,7 @@ function renderMonthSummary(){
       </div>
       <div class="summarySection"><div class="head"><h3>Expense Breakdown</h3></div>
         ${rowsHtml}
-        <div class="summaryNote">Own income and expenses are shown here. Behalf of Other's and account-to-account transfers are excluded from the income/expense totals. Balance cards show the actual total account position.</div>
+        <div class="summaryNote">Own income and expenses are shown here. Held for Others and account-to-account transfers are excluded from the income/expense totals. Balance cards show the actual total account position.</div>
       </div>
     </div>`;
 }
@@ -1271,7 +1330,7 @@ function historyRow(x){
   if(x.kind==="income"||x.kind==="expense"){
     const a=acc(x.accountId);title=esc(x.category);meta=`${esc(x.date)} • ${esc(a?.name||"Unknown")}${x.note?" • "+esc(x.note):""}`;amount=(x.kind==="income"?"+":"−")+fmt(x.amount);cls=x.kind==="income"?"inc":"exp";edit=`editEntry(${jsq(x.id)})`;receipt=x.attachmentKey?`<button class="tiny" onclick="event.stopPropagation();showPhotoByKey(${jsq(x.attachmentKey)})">📎</button>`:"";
   }else if(x.kind==="behalf"){
-    const a=acc(x.accountId);const dir=x.behalfDirection==="plus";const running=behalfRunningAfter(x.id);title=`Behalf of Other's — ${dir?"Received":"Returned"}`;meta=`${esc(x.date)} • ${esc(a?.name||"Unlinked account")}${x.note?" • "+esc(x.note):""} • Held after: ${fmt(running)}`;amount=(dir?"+":"−")+fmt(x.amount);cls="loan";edit="";
+    const a=acc(x.accountId);const dir=x.behalfDirection==="plus";const running=behalfRunningAfter(x.id);title=`Held for Others — ${dir?"Received":"Returned"}`;meta=`${esc(x.date)} • ${esc(a?.name||"Unlinked account")}${x.note?" • "+esc(x.note):""} • Held after: ${fmt(running)}`;amount=(dir?"+":"−")+fmt(x.amount);cls="loan";edit="";
   }else if(x.kind==="transfer"){
     title="Transfer";meta=`${esc(x.date)} • ${esc(acc(x.fromId)?.name||"?")} → ${esc(acc(x.toId)?.name||"?")}${x.note?" • "+esc(x.note):""}`;amount=fmt(x.amount);edit=`editTransfer(${jsq(x.id)})`;
   }else{
@@ -1339,7 +1398,7 @@ if(summaryFromEl&&summaryToEl){
   renderMonthSummary();
 }
 
-/* Fresh PWA update — schema/cache v48 */
+/* Fresh PWA update — schema/cache v51 */
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
