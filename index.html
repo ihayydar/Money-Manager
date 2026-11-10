@@ -12,76 +12,87 @@
 <title>Money Manager</title>
 <style>
 :root{
-  --bg:#f4f7f6;--card:#fff;--ink:#13201e;--muted:#73817d;--line:#e2ebe8;
+  --bg:#f3f6f5;--card:#fff;--ink:#13201e;--ink-soft:#3d4c48;--muted:#6f7e7a;--line:#e1e9e6;
   --green:#0b5f55;--green2:#0f7c6d;--soft:#eaf5f2;--red:#c94349;
-  --amber:#a86b18;--violet:#6253b3;--shadow:0 10px 28px rgba(20,45,40,.06)
+  --amber:#a86b18;--violet:#6253b3;--shadow:0 1px 2px rgba(20,45,40,.04);
+  --r:14px;--r-sm:11px
 }
 *{box-sizing:border-box} html,body,#root{overscroll-behavior-x:none} img,svg,video,canvas,iframe{max-width:100%;}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;width:100%;max-width:100%;overflow-x:hidden;touch-action:pan-y}
-body{margin:0;width:100%;min-width:0;max-width:100%;overflow-x:hidden;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+body{margin:0;width:100%;min-width:0;max-width:100%;overflow-x:hidden;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:13px;line-height:1.35;color:var(--ink);font-variant-numeric:tabular-nums}
 button,input,select{font:inherit} input,select{font-size:16px!important}
-button{touch-action:manipulation}
-.app{width:100%;max-width:560px;min-width:0;margin:auto;padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 94px);touch-action:pan-y}
-.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.brand h1{font-size:24px;letter-spacing:-.5px;margin:0}.brand small,.muted{color:var(--muted);font-size:12px}
-.gear{width:42px;height:42px;border:1px solid var(--line);background:#fff;color:var(--green);border-radius:14px;font-size:18px}
-.hero{background:linear-gradient(145deg,#0b5f55,#084b45);color:#fff;border-radius:26px;padding:20px;box-shadow:0 16px 36px rgba(11,95,85,.18)}
-.hero small{opacity:.8}.hero .big{font-size:36px;font-weight:900;margin:4px 0 15px;letter-spacing:-1px}
-.heroGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini{background:rgba(255,255,255,.1);padding:12px;border-radius:15px}.mini b{display:block;font-size:17px;margin-top:4px}
-.sec{margin-top:18px}.head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 10px}.head h3{font-size:15px;margin:0}
-.link{border:0;background:transparent;color:var(--green);font-weight:850;font-size:12px;padding:0}
-.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:15px;box-shadow:var(--shadow)}.card small{color:var(--muted)}.card b{display:block;font-size:22px;margin-top:4px}
-.notice{background:linear-gradient(145deg,#fffaf1,#fff);border:1px solid #eee0c2;border-radius:20px;padding:15px;display:flex;justify-content:space-between;gap:12px;align-items:center}.notice small{color:var(--muted)}.notice b{display:block;font-size:21px;margin-top:4px}
-.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.quick button{border:1px solid var(--line);background:#fff;border-radius:17px;padding:11px 5px;font-size:11px;font-weight:850}.quick i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;margin:auto auto 6px;font-style:normal;font-size:18px}
+button{touch-action:manipulation;cursor:pointer}
+.app{width:100%;max-width:560px;min-width:0;margin:auto;padding:calc(env(safe-area-inset-top) + 8px) 12px calc(env(safe-area-inset-bottom) + 72px);touch-action:pan-y}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.brand h1{font-size:20px;letter-spacing:-.4px;margin:0;line-height:1.1}.brand small,.muted{color:var(--muted);font-size:11px}
+.gear{width:36px;height:36px;border:1px solid var(--line);background:#fff;color:var(--green);border-radius:11px;font-size:16px;padding:0}
+.hero{background:linear-gradient(145deg,#0b5f55,#084b45);color:#fff;border-radius:18px;padding:14px 15px;box-shadow:0 8px 20px rgba(11,95,85,.14)}
+.hero small{opacity:.8;font-size:11px}.hero .big{font-size:30px;font-weight:900;margin:2px 0 10px;letter-spacing:-.8px;line-height:1.1}
+.heroGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mini{background:rgba(255,255,255,.1);padding:9px 11px;border-radius:12px}.mini b{display:block;font-size:15px;margin-top:2px}
+.sec{margin-top:14px}.head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 7px}.head h3{font-size:13px;margin:0;font-weight:800;color:var(--ink-soft)}
+.link{border:0;background:transparent;color:var(--green);font-weight:850;font-size:12px;padding:4px 2px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;box-shadow:var(--shadow)}.card small{color:var(--muted)}.card b{display:block;font-size:19px;margin-top:2px}
+.notice{background:linear-gradient(145deg,#fffaf1,#fff);border:1px solid #eee0c2;border-radius:var(--r);padding:12px;display:flex;justify-content:space-between;gap:10px;align-items:center}.notice small{color:var(--muted)}.notice b{display:block;font-size:18px;margin-top:2px}
+.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.quick button{border:1px solid var(--line);background:#fff;border-radius:13px;padding:8px 3px 7px;font-size:10.5px;font-weight:800;line-height:1.2;color:var(--ink-soft)}.quick i{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;margin:auto auto 4px;font-style:normal;font-size:15px}
 .ig{background:#e7f7f1;color:#096a58}.ir{background:#fff0f0;color:#b83f43}.ia{background:#fff6e5;color:#996215}.iv{background:#f0eeff;color:#6252af}
-.screen{display:none}.screen.active{display:block}.title{font-size:27px;font-weight:900;letter-spacing:-.7px;margin:3px 2px}.sub{font-size:12px;color:var(--muted);margin:0 2px 14px}
-.balanceStrip{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}.balCard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px}.balCard small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.balCard b{display:block;font-size:15px;margin-top:3px}
-.filters{display:flex;flex-wrap:wrap;gap:7px;padding:1px 0 10px;min-width:0}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;white-space:nowrap;font-size:12px;font-weight:800}.chip.active{background:var(--green);color:#fff;border-color:var(--green)}
-.row{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 13px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;box-shadow:0 4px 14px rgba(30,50,42,.025)}
+.screen{display:none}.screen.active{display:block}.title{font-size:21px;font-weight:900;letter-spacing:-.5px;margin:2px 2px 1px;line-height:1.15}.sub{font-size:11px;color:var(--muted);margin:0 2px 10px;line-height:1.4}
+.balanceStrip{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:10px}.balCard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px}.balCard small{display:block;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.balCard b{display:block;font-size:14px;margin-top:1px}
+.filters{display:flex;flex-wrap:wrap;gap:6px;padding:0 0 8px;min-width:0}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;white-space:nowrap;font-size:11.5px;font-weight:800;color:var(--ink-soft)}.chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+.row{background:#fff;border:1px solid var(--line);border-radius:13px;padding:9px 11px;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
 .editable{cursor:pointer}.editable:active{transform:scale(.995)}
-.rowMain{min-width:0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex:1}.rowText{min-width:0}.rowText b{font-size:14px}.rowText small{display:block;color:var(--muted);font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis}.amt{font-weight:900;white-space:nowrap}.inc{color:var(--green2)}.exp{color:var(--red)}.loan{color:var(--amber)}.violet{color:var(--violet)}
-.actions{display:flex;gap:5px;align-items:center;flex-shrink:0}.tiny{border:1px solid #d6e5e1;background:var(--soft);border-radius:11px;padding:7px 9px;font-size:11px;font-weight:850;color:var(--green)}.tiny.red{color:var(--red);background:#fff2f2}
-.sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.sum{background:#fff;border:1px solid var(--line);border-radius:17px;padding:12px}.sum small{color:var(--muted)}.sum b{display:block;font-size:17px;margin-top:4px}
-.nav{position:fixed;left:0;transform:none;bottom:0;width:100%;max-width:560px;right:0;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 6px calc(env(safe-area-inset-bottom) + 8px);z-index:20}
-.nav button{border:0;background:transparent;color:#7b8985;font-size:10px;font-weight:750;padding:7px 3px;border-radius:11px}.nav span{display:block;font-size:20px;line-height:21px}.nav .active{background:var(--soft);color:var(--green)}
-.modal{display:none;position:fixed;inset:0;background:rgba(10,25,22,.38);align-items:flex-end;justify-content:center;z-index:50}.sheet{width:min(560px,100%);min-width:0;background:#fff;border-radius:28px 28px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);max-height:92vh;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;touch-action:pan-y}.drag{width:44px;height:5px;background:#dfe6e3;border-radius:99px;margin:0 auto 14px}.sheet h2{font-size:21px;margin:0 0 12px}
-.bchoices{display:grid;gap:8px}.bchoice{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:12px 14px}.bchoice b{font-size:14px;color:var(--ink)}.bchoice small{font-size:12px;line-height:1.35;color:var(--muted);font-weight:500}.bchoice.active{border-color:var(--green);background:var(--soft)}.bchoice.active b{color:var(--green)}
-.field{margin:11px 0}.field label{display:block;color:var(--muted);font-size:12px;font-weight:750;margin:0 0 6px 2px}input,select{width:100%;max-width:100%;border:1px solid var(--line);border-radius:15px;padding:13px 12px;background:#fff}
-.btn{width:100%;border:0;border-radius:16px;padding:13px;font-size:15px;font-weight:850;margin-top:8px}.primary{background:var(--green);color:#fff}.secondary{background:#edf2f0;color:#34413e}.danger{background:#fff0f0;color:var(--red)}
-.calc{background:#f8faf9;border:1px solid var(--line);border-radius:20px;padding:12px;margin:10px 0}.display{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;text-align:right;min-width:0;overflow:hidden}.display small{color:var(--muted);font-size:11px}.display b{display:block;font-size:30px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.calcExpression{color:var(--ink-soft);font-size:12px;font-weight:750;min-height:18px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.preview{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:12px;flex-wrap:wrap}.preview span{color:var(--muted)}.preview strong{color:var(--ink)}
-.keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.keys button,.opkeys button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px 0;font-size:18px;font-weight:850;min-width:0}.opkeys{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:8px}.opkeys .op{background:var(--soft);color:var(--green)}.opkeys .clr{background:#fff2f2;color:var(--red)}
-.toggle{appearance:none;width:44px;height:26px;border-radius:99px;background:#d7dfdc;position:relative}.toggle:checked{background:var(--green2)}.toggle:before{content:"";position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s}.toggle:checked:before{left:21px}
-.empty{text-align:center;padding:22px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:17px}
-.photoBox{background:#f8faf9;border:1px dashed #cfded9;border-radius:16px;padding:11px}.photoRow{display:flex;gap:8px;align-items:center}.photoRow input{padding:9px}.receiptTag{display:inline-flex;align-items:center;gap:4px;color:var(--violet);font-weight:850;font-size:11px}
-.photoPreview{display:none;width:100%;max-height:300px;object-fit:contain;border-radius:16px;background:#f2f5f4;margin-top:10px}
-.warn{background:#fff7e7;border:1px solid #efdcae;border-radius:16px;padding:10px 12px;font-size:12px;color:#7f5716;margin-bottom:12px}
+.rowMain{min-width:0;display:flex;justify-content:space-between;align-items:center;gap:8px;flex:1}.rowText{min-width:0}.rowText b{font-size:13px;font-weight:750}.rowText small{display:block;color:var(--muted);font-size:10.5px;margin-top:1px;overflow:hidden;text-overflow:ellipsis}.amt{font-weight:850;white-space:nowrap;font-size:13px}.inc{color:var(--green2)}.exp{color:var(--red)}.loan{color:var(--amber)}.violet{color:var(--violet)}
+.actions{display:flex;gap:4px;align-items:center;flex-shrink:0}.tiny{border:1px solid #d6e5e1;background:var(--soft);border-radius:9px;padding:5px 8px;font-size:10.5px;font-weight:850;color:var(--green)}.tiny.red{color:var(--red);background:#fff2f2}
+.sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.sum{background:#fff;border:1px solid var(--line);border-radius:13px;padding:9px 11px}.sum small{color:var(--muted);font-size:11px}.sum b{display:block;font-size:15px;margin-top:2px}
+.nav{position:fixed;left:0;transform:none;bottom:0;width:100%;max-width:560px;right:0;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:4px 6px calc(env(safe-area-inset-bottom) + 4px);z-index:20}
+.nav button{border:0;background:transparent;color:#7b8985;font-size:10px;font-weight:750;padding:4px 2px;border-radius:10px}.nav span{display:block;font-size:18px;line-height:19px}.nav .active{background:var(--soft);color:var(--green)}
+.modal{display:none;position:fixed;inset:0;background:rgba(10,25,22,.38);align-items:flex-end;justify-content:center;z-index:50}.sheet{width:min(560px,100%);min-width:0;background:#fff;border-radius:20px 20px 0 0;padding:10px 14px calc(env(safe-area-inset-bottom) + 14px);max-height:92vh;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;touch-action:pan-y}.drag{width:36px;height:4px;background:#dfe6e3;border-radius:99px;margin:0 auto 10px}.sheet h2{font-size:17px;margin:0 0 8px}
+.bchoices{display:grid;gap:7px}.bchoice{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:13px;padding:9px 11px}.bchoice b{font-size:13px;color:var(--ink)}.bchoice small{font-size:11px;line-height:1.3;color:var(--muted);font-weight:500}.bchoice.active{border-color:var(--green);background:var(--soft)}.bchoice.active b{color:var(--green)}
+.field{margin:8px 0}.field label{display:block;color:var(--muted);font-size:11.5px;font-weight:750;margin:0 0 4px 2px}input,select{width:100%;max-width:100%;border:1px solid var(--line);border-radius:11px;padding:9px 11px;background:#fff}
+.btn{width:100%;border:0;border-radius:12px;padding:11px;font-size:14px;font-weight:850;margin-top:6px}.primary{background:var(--green);color:#fff}.secondary{background:#edf2f0;color:#34413e}.danger{background:#fff0f0;color:var(--red)}
+.calc{background:#f8faf9;border:1px solid var(--line);border-radius:14px;padding:9px;margin:8px 0}.display{background:#fff;border:1px solid var(--line);border-radius:11px;padding:9px 11px;text-align:right;min-width:0;overflow:hidden}.display small{color:var(--muted);font-size:10.5px}.display b{display:block;font-size:26px;margin-top:1px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.calcExpression{color:var(--ink-soft);font-size:11.5px;font-weight:750;min-height:16px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.preview{display:flex;justify-content:space-between;gap:6px;margin-top:6px;font-size:11.5px;flex-wrap:wrap}.preview span{color:var(--muted)}.preview strong{color:var(--ink)}
+.keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.keys button,.opkeys button{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px 0;font-size:17px;font-weight:800;min-width:0}.opkeys{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:6px}.opkeys .op{background:var(--soft);color:var(--green)}.opkeys .clr{background:#fff2f2;color:var(--red)}
+.toggle{appearance:none;width:40px;height:24px;border-radius:99px;background:#d7dfdc;position:relative}.toggle:checked{background:var(--green2)}.toggle:before{content:"";position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s}.toggle:checked:before{left:19px}
+.empty{text-align:center;padding:16px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:13px;font-size:12px}
+.photoBox{background:#f8faf9;border:1px dashed #cfded9;border-radius:13px;padding:9px}.photoRow{display:flex;gap:8px;align-items:center}.photoRow input{padding:7px}.receiptTag{display:inline-flex;align-items:center;gap:4px;color:var(--violet);font-weight:850;font-size:11px}
+.photoPreview{display:none;width:100%;max-height:300px;object-fit:contain;border-radius:13px;background:#f2f5f4;margin-top:8px}
+.warn{background:#fff7e7;border:1px solid #efdcae;border-radius:13px;padding:8px 10px;font-size:11.5px;color:#7f5716;margin-bottom:10px}
 
-.summaryPage{max-width:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.summaryTop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}.summaryTop .eyebrow{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}.summaryTop h2{font-size:24px;line-height:1.05;margin:3px 0 0;letter-spacing:-.035em}.summaryPeriod{font-size:11px;color:var(--muted);text-align:right;white-space:nowrap}.summaryHero{background:linear-gradient(135deg,#073f3a 0%,#0b5f55 55%,#14756a 100%);color:#fff;border-radius:24px;padding:18px;box-shadow:0 12px 28px rgba(7,63,58,.16);margin-bottom:12px}.summaryHero .heroLabel{font-size:11px;opacity:.78;font-weight:750;text-transform:uppercase;letter-spacing:.06em}.summaryHero .heroValue{display:block;font-size:32px;line-height:1.05;font-weight:900;letter-spacing:-.045em;margin:5px 0 3px}.summaryHero .heroSub{font-size:11px;opacity:.82}.summaryBalance{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}.summaryBalanceCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;box-shadow:0 4px 14px rgba(20,40,35,.04)}.summaryBalanceCard small{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.summaryBalanceCard b{display:block;font-size:19px;line-height:1.15;margin-top:5px;letter-spacing:-.02em}.summaryBalanceCard .date{font-size:10px;color:var(--muted);margin-top:4px}.summaryGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}.summaryMetric{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px}.summaryMetric small{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.summaryMetric b{display:block;font-size:18px;margin-top:5px}.summarySection{background:#fff;border:1px solid var(--line);border-radius:20px;padding:13px}.summarySection .head{margin-bottom:9px}.summarySection .head h3{font-size:14px}.summaryRow{padding:9px 2px;display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #edf1ef}.summaryRow:last-of-type{border-bottom:0}.summaryRow b{font-size:12px}.summaryRow .amt{font-size:12px}.summaryNote{font-size:10px;color:var(--muted);margin-top:10px;line-height:1.45}.summaryEmpty{padding:13px;text-align:center;color:var(--muted);background:#f8faf9;border:1px dashed var(--line);border-radius:14px;font-size:12px}
-.compareRow{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid #edf1ef}.compareRow:last-of-type{border-bottom:0}.compareLabel{font-size:11px;font-weight:800;color:var(--ink)}.compareBars{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 8px}.compareBarTrack{height:7px;border-radius:99px;background:#eef3f1;overflow:hidden}.compareBarTrack.prevTrack{opacity:.55}.compareBarFill{height:100%;border-radius:99px;background:var(--green2)}.compareBarFill.exp{background:var(--red)}.compareBarFill.prev{background:var(--muted)}.compareBarVal{font-size:11px;font-weight:800;white-space:nowrap}.compareBarVal.muted{color:var(--muted);font-weight:700}.compareDelta{font-size:10px;font-weight:850;text-align:right;white-space:nowrap}.compareDelta.good{color:var(--green2)}.compareDelta.bad{color:var(--red)}
+.summaryPage{max-width:100%}.summaryTop{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:10px}.summaryTop .eyebrow{font-size:11px;font-weight:800;color:var(--green)}.summaryTop h2{font-size:20px;line-height:1.1;margin:2px 0 0;letter-spacing:-.03em}.summaryPeriod{font-size:10.5px;color:var(--muted);text-align:right;white-space:nowrap}.summaryHero{background:linear-gradient(135deg,#073f3a 0%,#0b5f55 55%,#14756a 100%);color:#fff;border-radius:18px;padding:14px 15px;box-shadow:0 8px 20px rgba(7,63,58,.14);margin-bottom:9px}.summaryHero .heroLabel{font-size:11px;opacity:.8;font-weight:700}.summaryHero .heroValue{display:block;font-size:27px;line-height:1.1;font-weight:900;letter-spacing:-.04em;margin:3px 0 2px}.summaryHero .heroSub{font-size:10.5px;opacity:.85}.summaryBalance{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}.summaryBalanceCard{background:#fff;border:1px solid var(--line);border-radius:13px;padding:9px 11px}.summaryBalanceCard small{display:block;color:var(--muted);font-size:10.5px;font-weight:700}.summaryBalanceCard b{display:block;font-size:16px;line-height:1.15;margin-top:3px;letter-spacing:-.02em}.summaryBalanceCard .date{font-size:10px;color:var(--muted);margin-top:2px}.summaryGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}.summaryMetric{background:#fff;border:1px solid var(--line);border-radius:13px;padding:9px 11px}.summaryMetric small{display:block;color:var(--muted);font-size:10.5px;font-weight:700}.summaryMetric b{display:block;font-size:16px;margin-top:3px}.summarySection{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:9px}.summarySection .head{margin-bottom:5px}.summarySection .head h3{font-size:13px}.summaryRow{padding:7px 2px;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #edf1ef}.summaryRow:last-of-type{border-bottom:0}.summaryRow b{font-size:12px}.summaryRow .amt{font-size:12px}.summaryNote{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.4}.summaryEmpty{padding:10px;text-align:center;color:var(--muted);background:#f8faf9;border:1px dashed var(--line);border-radius:11px;font-size:12px}
+.compareRow{display:grid;grid-template-columns:48px 1fr 42px;align-items:center;gap:6px;padding:6px 2px;border-bottom:1px solid #edf1ef}.compareRow:last-of-type{border-bottom:0}.compareLabel{font-size:11px;font-weight:800;color:var(--ink)}.compareBars{display:grid;grid-template-columns:1fr auto;align-items:center;gap:3px 8px}.compareBarTrack{height:6px;border-radius:99px;background:#eef3f1;overflow:hidden}.compareBarTrack.prevTrack{opacity:.55}.compareBarFill{height:100%;border-radius:99px;background:var(--green2)}.compareBarFill.exp{background:var(--red)}.compareBarFill.prev{background:var(--muted)}.compareBarVal{font-size:10.5px;font-weight:800;white-space:nowrap}.compareBarVal.muted{color:var(--muted);font-weight:700}.compareDelta{font-size:10px;font-weight:850;text-align:right;white-space:nowrap}.compareDelta.good{color:var(--green2)}.compareDelta.bad{color:var(--red)}
 
-@media(max-width:360px){.app{padding-left:12px;padding-right:12px}.hero .big{font-size:31px}.quick{grid-template-columns:repeat(3,1fr)}.balanceStrip{grid-template-columns:1fr 1fr}}
+.heroHead{display:flex;justify-content:space-between;align-items:center}.heroLink{border:0;background:rgba(255,255,255,.14);color:#fff;font-size:11px;font-weight:800;padding:4px 9px;border-radius:99px}.hero .big{margin:1px 0 10px;font-size:32px}.typeRow{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.tchip{background:rgba(255,255,255,.1);border-radius:99px;padding:3px 9px;font-size:11px;opacity:.95}.tchip b{display:inline;font-size:inherit;margin:0;font-weight:800}.matureBox{background:#fff;color:var(--green)}.matureBox small{opacity:.75;color:var(--green)}.matureBox b{font-size:17px}.hero .heroGrid .mini b{font-size:17px}
+.hero .big{color:#fff}.heroHead small{color:#fff;opacity:1;font-weight:700}.heroGrid .mini:nth-child(1){background:#e0f2fe;box-shadow:none}.heroGrid .mini:nth-child(1) small{color:#0c4a6e;opacity:.8}.heroGrid .mini:nth-child(1) b{color:#0c4a6e}.heroGrid .mini:nth-child(2){background:#fbbf24;box-shadow:none}.heroGrid .mini:nth-child(2) small{color:#451a03;opacity:.8}.heroGrid .mini:nth-child(2) b{color:#451a03}
+.summaryPeriod{text-align:left;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin:0 2px 8px;white-space:normal}#reports>.card{display:grid;grid-template-columns:1fr 1fr;gap:0 8px;align-items:end}#reports>.card .field{margin:0 0 4px}#reports>.card .btn{grid-column:1/-1;margin-top:4px}.quick button{padding:8px 2px 7px;font-size:10px}.quick i{width:26px;height:26px;font-size:14px}.sec>.card+.card{margin-top:7px}
+#reports>.card .field,#reports>.card input{min-width:0}
+.seg{display:none;grid-template-columns:repeat(4,1fr);gap:4px;background:#e6edeb;border-radius:12px;padding:3px;margin:0 0 10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:15}body.rec .seg{display:grid}.seg button{border:0;background:transparent;border-radius:9px;padding:7px 2px;font-size:12px;font-weight:800;color:var(--muted)}.seg button.active{background:#fff;color:var(--green);box-shadow:0 1px 3px rgba(20,45,40,.12)}
+.nav{grid-template-columns:repeat(2,1fr)}.nav button{display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;padding:8px 2px}.nav span{display:inline;font-size:17px;line-height:1}
+#activity>.title,#reports>.title,#status>.title,#accounts .title{display:none}
+.filters{flex-wrap:nowrap;gap:5px}.chip{flex:1 1 0;min-width:0;padding:6px 4px;text-align:center;font-size:11.5px}
+#accounts>.top{margin-bottom:6px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--green2);outline-offset:1px}
+@media(max-width:360px){.app{padding-left:10px;padding-right:10px}.hero .big{font-size:27px}.quick{grid-template-columns:repeat(3,1fr)}.balanceStrip{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div class="app">
+<div class="seg" id="segBar">
+  <button data-go="activity" onclick="go('activity',1)">History</button>
+  <button data-go="reports" onclick="go('reports',1)">Summary</button>
+  <button data-go="status" onclick="go('status',1)">Status</button>
+  <button data-go="accounts" onclick="go('accounts',1)">Accounts</button>
+</div>
 
 <section id="home" class="screen active">
   <div class="top">
-    <div class="brand"><h1>Money Manager</h1><small>Every rupee has a trail</small></div>
-    <button class="gear" onclick="go('accounts',4)">⚙</button>
+    <div class="brand"><h1>Money Manager</h1></div>
   </div>
   <div class="hero">
-    <small>Mature for Today :</small>
+    <div class="heroHead"><small>Mature for Today</small></div>
     <div class="big" id="homeMature">Rs 0</div>
     <div class="heroGrid">
-      <div class="mini"><small>Total Accounts</small><b id="homeTotalAccounts">Rs 0</b></div>
+      <div class="mini"><small>Total in Accounts</small><b id="homeTotalAccounts">Rs 0</b></div>
       <div class="mini" onclick="openHeld()" style="cursor:pointer"><small>Held for Others ›</small><b id="homeLiabilities">Rs 0</b></div>
     </div>
-  </div>
-
-  <div class="sec">
-    <div class="head"><h3>Accounts</h3><button class="link" onclick="go('accounts',4)">Manage</button></div>
-    <div class="card"><small>Total in Active Accounts</small><b id="homeAccountCard">Rs 0</b></div>
   </div>
 
   <div class="sec">
@@ -92,8 +103,6 @@ button{touch-action:manipulation}
       <button onclick="openEntry('behalf')"><i class="ia">±</i>Held for Others</button>
       <button onclick="openTransfer()"><i class="ig">⇄</i>Transfer</button>
       <button onclick="openAdjust()"><i class="iv">↻</i>Adjust</button>
-      <button onclick="go('activity',1)"><i class="iv">☷</i>History</button>
-      <button onclick="go('reports',2);renderMonthSummary()"><i class="iv">▤</i>Month Summary</button>
     </div>
   </div>
 
@@ -102,13 +111,11 @@ button{touch-action:manipulation}
 
 <section id="activity" class="screen">
   <div class="title">History</div>
-  <div class="sub">Where money came from, where it went, and current account balances • Every Behalf movement is an immutable ledger entry</div>
-  <div id="historyBalances" class="balanceStrip"></div>
   <div class="filters">
     <button class="chip active" data-filter="all">All</button>
     <button class="chip" data-filter="income">Income</button>
     <button class="chip" data-filter="expense">Expense</button>
-    <button class="chip" data-filter="behalf">Held for Others</button>
+    <button class="chip" data-filter="behalf">Held</button>
     <button class="chip" data-filter="transfer">Transfer</button>
     <button class="chip" data-filter="adjust">Adjust</button>
   </div>
@@ -116,8 +123,7 @@ button{touch-action:manipulation}
 </section>
 
 <section id="reports" class="screen">
-  <div class="title">Month-End Summary</div>
-  <div class="sub">Your income and main expenses for the selected month. Held for Others money is not included.</div>
+  <div class="title">Summary</div>
   <div class="card">
     <div class="field"><label>From Date</label><input id="summaryFromDate" type="date"></div>
     <div class="field"><label>To Date</label><input id="summaryToDate" type="date"></div>
@@ -145,9 +151,8 @@ button{touch-action:manipulation}
     <button class="link" onclick="openAccount()">+ Add</button>
   </div>
   <div id="accountList"></div>
-  <div class="sec"><div class="head"><h3>Adjustment History</h3></div><div id="adjustmentList"></div></div>
   <div class="sec"><div class="head"><h3>App Lock</h3></div><div class="card" id="appLockCard"></div></div>
-  <div class="sec"><div class="head"><h3>Data Safety</h3></div><div class="card"><small>Clean all transaction history while keeping active account balances and any outstanding Held for Others balance as new starting figures.</small><button class="btn danger" onclick="cleanHistory()">Clean History</button></div></div>
+  <div class="sec"><div class="head"><h3>Data Safety</h3></div><div class="card"><small>Clears history. Account balances and Held for Others carry forward as starting figures.</small><button class="btn danger" onclick="cleanHistory()">Clean History</button></div></div>
 </section>
 </div>
 
@@ -173,10 +178,7 @@ button{touch-action:manipulation}
 
 <div class="nav">
   <button class="active" onclick="go('home',0)"><span>⌂</span>Home</button>
-  <button onclick="go('activity',1)"><span>☷</span>History</button>
-  <button onclick="go('reports',2)"><span>◫</span>Reports</button>
-  <button onclick="go('status',3)"><span>◷</span>Status</button>
-  <button onclick="go('accounts',4)"><span>▣</span>Accounts</button>
+  <button onclick="go(lastRec,1)"><span>☷</span>Records</button>
 </div>
 
 <!-- Income / Expense -->
@@ -672,12 +674,17 @@ transferCalc.innerHTML=calcHTML("transfer","Amount");
 adjustCalc.innerHTML=calcHTML("adjust","Adjustment (+ / −)");
 
 /* ---------- Navigation ---------- */
+let lastRec="activity";
 function go(id,index){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-  document.querySelectorAll(".nav button")[index].classList.add("active");
+  const rec=id!=="home"; if(rec) lastRec=id;
+  document.body.classList.toggle("rec",rec);
+  document.querySelectorAll(".nav button").forEach((b,i)=>b.classList.toggle("active",i===(rec?1:0)));
+  document.querySelectorAll("#segBar button").forEach(b=>b.classList.toggle("active",b.dataset.go===id));
+  window.scrollTo(0,0);
   if(id==="activity") renderHistory();
+  if(id==="reports") renderMonthSummary();
 }
 function closeModal(id){ document.getElementById(id).style.display="none"; if(id==="entryModal") entryType.disabled=false; editState={type:null,id:null}; }
 
@@ -1014,12 +1021,12 @@ async function hashPin(pin,salt){
 function renderAppLockCard(){
   const card=document.getElementById("appLockCard"); if(!card) return;
   if(data.security?.enabled){
-    card.innerHTML=`<small>App Lock is on. A PIN is required every time you open Money Manager.</small>
+    card.innerHTML=`<small>App Lock is on.</small>
       <button class="btn secondary" onclick="openPinModal('change')">Change PIN</button>
       <button class="btn danger" onclick="turnOffAppLock()">Turn Off App Lock</button>`;
   } else {
-    card.innerHTML=`<small>Set a PIN so Money Manager asks for it every time it's opened, keeping your figures private if someone else picks up your phone.</small>
-      <button class="btn" onclick="openPinModal('set')">Set PIN</button>`;
+    card.innerHTML=`<small>Ask for a PIN every time the app opens.</small>
+      <button class="btn primary" onclick="openPinModal('set')">Set PIN</button>`;
   }
 }
 function openPinModal(kind){
@@ -1253,24 +1260,17 @@ function renderMonthSummary(){
   const periodLabel = `${new Date(from+"T00:00:00").toLocaleDateString("en-PK",{day:"2-digit",month:"short",year:"numeric"})} → ${new Date(to+"T00:00:00").toLocaleDateString("en-PK",{day:"2-digit",month:"short",year:"numeric"})}`;
   el.innerHTML=`
     <div class="summaryPage">
-      <div class="summaryTop">
-        <div><div class="eyebrow">Money Manager</div><h2>Period Summary</h2></div>
-        <div class="summaryPeriod">${esc(periodLabel)}</div>
-      </div>
+      <div class="summaryPeriod">${esc(periodLabel)}</div>
       <div class="summaryHero">
         <div class="heroLabel">Remaining from own income & expenses</div>
         <span class="heroValue">${fmt(net)}</span>
-        <div class="heroSub">${net>=0?"You kept this amount after your recorded expenses.":"Your recorded expenses exceeded income by this amount."}</div>
+        <div class="heroSub">${net>=0?"Kept after expenses":"Spent more than income"}</div>
       </div>
       <div class="summaryBalance">
         <div class="summaryBalanceCard"><small>Balance at period start</small><b>${fmt(openingBalance)}</b><div class="date">Before ${esc(from)}</div></div>
         <div class="summaryBalanceCard"><small>Balance at period end</small><b>${fmt(closingBalance)}</b><div class="date">As of ${esc(to)}</div></div>
       </div>
-      <div class="summaryGrid">
-        <div class="summaryMetric"><small>Total Income</small><b>${fmt(income)}</b></div>
-        <div class="summaryMetric"><small>Total Expenses</small><b>${fmt(expense)}</b></div>
-      </div>
-      <div class="summarySection"><div class="head"><h3>vs Previous Period</h3></div>
+      <div class="summarySection"><div class="head"><h3>Income &amp; Expenses vs last month</h3></div>
         <div class="compareRow">
           <div class="compareLabel">Income</div>
           <div class="compareBars">
@@ -1291,11 +1291,11 @@ function renderMonthSummary(){
           </div>
           <div class="compareDelta ${expenseDelta.dir==='up'?'bad':expenseDelta.dir==='down'?'good':''}">${expenseDelta.text}</div>
         </div>
-        <div class="summaryNote">Compared with the same days one month earlier (${esc(prevPeriodLabel)}).</div>
+        <div class="summaryNote">Last month: ${esc(prevPeriodLabel)}</div>
       </div>
       <div class="summarySection"><div class="head"><h3>Expense Breakdown</h3></div>
         ${rowsHtml}
-        <div class="summaryNote">Own income and expenses are shown here. Held for Others and account-to-account transfers are excluded from the income/expense totals. Balance cards show the actual total account position.</div>
+        <div class="summaryNote">Held for Others and transfers are not counted.</div>
       </div>
     </div>`;
 }
@@ -1354,7 +1354,8 @@ document.querySelectorAll(".chip").forEach(btn=>btn.addEventListener("click",()=
 /* ---------- Render ---------- */
 function render(){
   const at=accountsTotal(), liab=liabilityTotal(), mat=mature();
-  homeMature.textContent=heroFmt(mat);homeTotalAccounts.textContent=heroFmt(at);homeLiabilities.textContent=heroFmt(liab);homeAccountCard.textContent=heroFmt(at);
+  homeMature.textContent=heroFmt(mat);homeTotalAccounts.textContent=heroFmt(at);homeLiabilities.textContent=(liab>0?"− ":"")+heroFmt(liab);
+
 
   recentList.innerHTML=mixedHistory().slice(0,5).map(historyRow).join("")||'<div class="empty">No activity yet</div>';
 
