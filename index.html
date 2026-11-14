@@ -91,43 +91,102 @@ details.more[open]{padding-bottom:10px}details.more .summarySection{border:0;pad
 .compareRow{grid-template-columns:62px 1fr 48px}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--green2);outline-offset:1px}
 @media(max-width:360px){.app{padding-left:10px;padding-right:10px}.hero .big{font-size:27px}.quick{grid-template-columns:repeat(3,1fr)}.balanceStrip{grid-template-columns:1fr 1fr}}
+
+[hidden]{display:none!important}
+body{background:linear-gradient(180deg,#d9ede8 0,#f3f6f5 220px) no-repeat,#f3f6f5}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin:0 2px 8px}.topbar h1{font-size:19px;margin:0;letter-spacing:-.4px;color:var(--green)}.topbar span{font-size:12.5px;color:var(--muted);font-weight:700}
+.strip{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:6px;margin-bottom:8px}
+.sc{background:#fff;border:1px solid var(--line);border-radius:13px;padding:7px 9px;min-width:0;box-shadow:var(--shadow)}.sc small{display:block;font-size:11.5px;font-weight:700;color:var(--muted)}.sc b{display:block;font-size:clamp(13px,4vw,16px);white-space:nowrap}
+.sc.main{background:linear-gradient(135deg,#073f3a,#0b5f55);border:0}.sc.main small{color:#bfe3dc}.sc.main b{color:#fff}
+.sc.amb{background:#fff4d6;border-color:#f3dd9b;cursor:pointer}.sc.amb small,.sc.amb b{color:#7a4a05}
+.types{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:8px}
+.tp{border:1px solid var(--line);background:#fff;border-radius:11px;padding:8px 0;font-size:12px;font-weight:800;color:var(--ink-soft)}
+.tp.on{color:#fff;border-color:transparent;box-shadow:0 3px 8px rgba(0,0,0,.15)}.tp[data-t=income].on{background:#0f7c6d}.tp[data-t=expense].on{background:var(--red)}.tp[data-t=behalf].on{background:#c98a14}.tp[data-t=transfer].on{background:#2b7fb8}.tp[data-t=adjust].on{background:var(--violet)}
+#entryModal{display:block!important}
+.ef{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:10px;box-shadow:0 6px 18px rgba(20,60,50,.07)}
+.ef .s1{grid-column:span 1}.ef .s2{grid-column:span 2}.ef .s4{grid-column:1/-1}
+.ef .field{margin:0;min-width:0}.ef .field label{font-size:11.5px;margin:0 0 2px 2px}.ef input,.ef select{padding:7px 9px;border-radius:10px;min-height:38px}
+.ef .btn{margin:0;padding:10px;border-radius:12px}
+.ef .calc{margin:0;padding:6px;background:#f6faf9}.ef .display{padding:5px 10px}.ef .display small{display:none}.ef .display b{font-size:24px}.ef .calcExpression{min-height:14px;margin:0}.ef .keys,.ef .opkeys{gap:5px;margin-top:5px}.ef .keys button,.ef .opkeys button{padding:7px 0}
+.ef #entryTitle{margin:0;font-size:13px;color:var(--violet)}
+.keys button{color:var(--ink)}
+.bchoice{padding:7px 10px;flex-direction:row}
+.photoBtn{display:grid;place-items:center;border:1px dashed #b9d0ca;border-radius:12px;background:#f6faf9;font-size:19px;cursor:pointer}
+.g2{display:grid;grid-template-columns:1fr 1fr;column-gap:8px}.g2>*{grid-column:1/-1}.g2>.half{grid-column:auto}.g2 .field{margin:4px 0}.g2 .calc{margin:4px 0}.g2 .keys button,.g2 .opkeys button{padding:7px 0}.g2 .display small{display:none}
+.tbl{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.tbl td{padding:8px 7px;vertical-align:middle;border-top:1px solid #edf1ef}.tbl tr:first-child td{border-top:0}.tbl tr.editable:active{background:var(--soft)}
+.tbl .d{width:46px;font-size:12px;font-weight:800;color:var(--muted);text-align:center}.tbl td b{display:block;font-size:14px}.tbl td small{display:block;color:var(--muted);font-size:11.5px;margin-top:1px}.tbl .a{text-align:right;white-space:nowrap}.tbl .x{width:26px;padding-left:0;text-align:center;color:var(--muted)}
+.nav{grid-template-columns:repeat(3,1fr)!important;gap:4px;border-radius:18px 18px 0 0;box-shadow:0 -4px 16px rgba(20,60,50,.08)}.nav button{flex-direction:column;gap:1px!important;font-size:12px!important;padding:6px 2px!important}.nav .active{background:var(--green);color:#fff}
+#accountList .row{box-shadow:var(--shadow)}
+#toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(16px);background:#13201e;color:#fff;padding:8px 18px;border-radius:99px;font-weight:800;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60}#toast.show{opacity:1;transform:translateX(-50%)}
+
+.ef{padding:8px;gap:6px;border-radius:20px}.ef .s3{grid-column:span 3}
+.ef .field label{display:none}
+.ef .field select,.ef .field input{background:#f6faf9;border-color:#e3ece9;font-weight:700;min-height:40px}
+.ef .calc{background:transparent;border:0;padding:0}
+.ef .display{background:linear-gradient(135deg,#f0f8f6,#fff);border-color:#d9ebe6;padding:6px 10px}
+.dtop{display:flex;align-items:center;gap:8px}.dtop .dm{flex:1;min-width:0;text-align:left}.dtop .dm small{display:block;font-size:11px;color:var(--muted)}.dtop b{flex:none;max-width:58%;font-size:25px!important;letter-spacing:-.5px}
+.dtop .clr{border:0;background:#fff0f0;color:var(--red);font-weight:900;border-radius:10px;width:34px;height:34px;font-size:15px;padding:0}
+.display small{display:block!important}
+.keys4{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:6px}
+.keys4 button{border:1px solid var(--line);background:#fff;border-radius:12px;padding:0;height:41px;font-size:19px;font-weight:800;color:var(--ink);box-shadow:0 1px 0 #e3ece9}
+.keys4 button:active{background:var(--soft);transform:scale(.97)}.keys4 .op{background:var(--soft);color:var(--green);border-color:#cfe5df}
+.ef .btn.primary{background:linear-gradient(135deg,#0f7c6d,#0b5f55);box-shadow:0 4px 10px rgba(11,95,85,.25);height:42px;padding:0}
+.ef .btn.secondary{height:42px;padding:0;font-size:14px}
+.photoBtn{margin-top:0!important;height:40px}
+.strip{margin-bottom:6px}.sc{padding:6px 9px}.types{margin-bottom:6px}.tp{padding:7px 0;background:#fff;box-shadow:var(--shadow)}.topbar{margin-bottom:6px}
+.g2 .keys4 button{height:38px}
+
+.topbar h1{font-size:22px}.topbar span{font-size:13.5px}
+.strip{gap:8px;margin-bottom:9px}
+.sc{padding:12px 12px 13px;border-radius:16px}
+.sc small{font-size:13px;margin-bottom:3px}
+.sc b{font-size:clamp(16px,5vw,21px);letter-spacing:-.5px}
+.sc.main{box-shadow:0 8px 18px rgba(7,63,58,.22)}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="seg" id="segBar">
-  <button data-go="activity" onclick="go('activity',1)">History &amp; Summary</button>
-  <button data-go="accounts" onclick="go('accounts',1)">Accounts &amp; Status</button>
-</div>
-
 <section id="home" class="screen active">
-  <div class="top">
-    <div class="brand"><h1>Money Manager</h1></div>
+  <div class="topbar"><h1>Money Manager</h1><span id="todayLbl"></span></div>
+  <div class="strip">
+    <div class="sc main"><small>Mature</small><b id="homeMature">Rs 0</b></div>
+    <div class="sc"><small>Accounts</small><b id="homeTotalAccounts">Rs 0</b></div>
+    <div class="sc amb" onclick="openHeld()"><small>Held ›</small><b id="homeLiabilities">Rs 0</b></div>
   </div>
-  <div class="hero">
-    <div class="heroHead"><small>Mature for Today</small></div>
-    <div class="big" id="homeMature">Rs 0</div>
-    <div class="heroGrid">
-      <div class="mini"><small>Total in Accounts</small><b id="homeTotalAccounts">Rs 0</b></div>
-      <div class="mini" onclick="openHeld()" style="cursor:pointer"><small>Held for Others ›</small><b id="homeLiabilities">Rs 0</b></div>
+  <div class="types">
+    <button class="tp" data-t="income" onclick="pickType('income')">＋ Income</button>
+    <button class="tp" data-t="expense" onclick="pickType('expense')">− Expense</button>
+    <button class="tp" data-t="behalf" onclick="pickType('behalf')">± Held</button>
+    <button class="tp" data-t="transfer" onclick="pickType('transfer')">⇄ Transfer</button>
+    <button class="tp" data-t="adjust" onclick="pickType('adjust')">↻ Adjust</button>
+  </div>
+  <div id="entryModal"><div class="ef">
+    <h2 id="entryTitle" class="s4">Add Entry</h2>
+    <select id="entryType" onchange="changeEntryType(this.value)" hidden><option value="income">Income</option><option value="expense">Expense</option><option value="behalf">Held for Others</option></select>
+    <div class="s4" id="behalfChoiceWrap" style="display:none"><div class="bchoices" style="grid-template-columns:1fr 1fr">
+      <button type="button" class="bchoice" data-c="recv_new" onclick="pickBehalf('recv_new')"><b>＋ Receive</b></button>
+      <button type="button" class="bchoice" data-c="ret" onclick="pickBehalf('ret')"><b>− Return</b></button></div></div>
+    <div id="behalfLegacy" style="display:none">
+      <select id="behalfAction" onchange="changeBehalfAction(this.value)"><option value="plus">Receive / Add</option><option value="minus">Return / Reduce</option></select>
+      <div id="behalfEffectWrap" style="display:none"><select id="behalfEffect" onchange="behalfEffect.dataset.userSet='1';refreshEntryPreview()"><option value="included">Already included</option><option value="new">New money entering</option><option value="out">Money leaving</option></select></div>
     </div>
-  </div>
-
-  <div class="sec">
-    <div class="head"><h3>Quick Actions</h3></div>
-    <div class="quick">
-      <button onclick="openEntry('income')"><i class="ig">＋</i>Income</button>
-      <button onclick="openEntry('expense')"><i class="ir">−</i>Expense</button>
-      <button onclick="openEntry('behalf')"><i class="ia">±</i>Held for Others</button>
-      <button onclick="openTransfer()"><i class="ig">⇄</i>Transfer</button>
-      <button onclick="openAdjust()"><i class="iv">↻</i>Adjust</button>
-    </div>
-  </div>
-
-  <div class="sec"><div class="head"><h3>Recent Activity</h3><button class="link" onclick="go('activity',1)">See all</button></div><div id="recentList"></div></div>
+    <div class="field s2"><label>Account</label><select id="entryAccount" onchange="refreshEntryPreview()"></select></div>
+    <div class="field s2" id="entryCategoryWrap"><label>Category</label><select id="entryCategory"></select></div>
+    <div class="s4" id="entryCalc"></div>
+    <input id="entryDate" type="date" hidden>
+    <div class="field s3"><label>Note</label><input id="entryNote" placeholder="Optional"></div>
+    <label class="photoBtn s1" title="Receipt / photo" style="margin-top:15px"><span id="photoTag">📎</span><input id="entryPhoto" type="file" accept="image/*" hidden></label>
+    <button class="btn primary s3" onclick="saveEntry()">Save</button>
+    <button class="btn secondary s1" id="entryClear" onclick="closeModal('entryModal')">Clear</button>
+    <button id="entryViewPhoto" type="button" class="tiny s4" style="display:none" onclick="viewCurrentEntryPhoto()">View Current Photo</button>
+    <button id="entryDeleteBtn" class="btn danger s4" style="display:none" onclick="deleteEditing('entry')">Delete Entry</button>
+  </div></div>
+  <div id="recentList" hidden></div>
 </section>
 
 <section id="activity" class="screen">
+  <div class="topbar"><h1>History &amp; Report</h1></div>
   <div class="period">
     <div class="field"><label>From</label><input id="summaryFromDate" type="date"></div>
     <div class="field"><label>To</label><input id="summaryToDate" type="date"></div>
@@ -146,6 +205,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 </section>
 
 <section id="accounts" class="screen">
+  <div class="topbar"><h1>Accounts</h1></div>
   <div class="asOf">
     <div class="field"><label>Position on date</label><input id="statusDate" type="date"></div>
     <button class="addBtn" onclick="openAccount()">+ Add account</button>
@@ -185,61 +245,33 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 </div>
 
 <div class="nav">
-  <button class="active" onclick="go('home',0)"><span>⌂</span>Home</button>
-  <button onclick="go(lastRec,1)"><span>☷</span>Records</button>
+  <button class="active" onclick="go('home')"><span>✎</span>Entry</button>
+  <button onclick="go('activity')"><span>☷</span>History</button>
+  <button onclick="go('accounts')"><span>🏦</span>Accounts</button>
 </div>
+<div id="toast"></div>
 
-<!-- Income / Expense -->
-<div id="entryModal" class="modal"><div class="sheet">
-  <div class="drag"></div><h2 id="entryTitle">Add Entry</h2>
-  <div class="field"><label>Entry Type</label><select id="entryType" onchange="changeEntryType(this.value)">
-    <option value="income">Income</option><option value="expense">Expense</option><option value="behalf">Held for Others</option>
-  </select></div>
-  <div class="field" id="behalfChoiceWrap" style="display:none"><label>Receive or Return?</label>
-    <div class="bchoices" style="grid-template-columns:1fr 1fr">
-      <button type="button" class="bchoice" data-c="recv_new" onclick="pickBehalf('recv_new')"><b>＋ Receive</b><small>Money comes into this account. Account ↑  Held ↑</small></button>
-      <button type="button" class="bchoice" data-c="ret" onclick="pickBehalf('ret')"><b>− Return</b><small>Money goes out of this account. Account ↓  Held ↓</small></button>
-    </div>
-  </div>
-  <div id="behalfLegacy" style="display:none">
-  <div class="field"><label>Behalf Action</label><select id="behalfAction" onchange="changeBehalfAction(this.value)"><option value="plus">Receive / Add</option><option value="minus">Return / Reduce</option></select></div>
-  <div class="field" id="behalfEffectWrap" style="display:none"><label>Account Effect</label><select id="behalfEffect" onchange="behalfEffect.dataset.userSet='1';refreshEntryPreview()"><option value="included">Already included in account balance — do not add again</option><option value="new">New money entering account — add amount</option><option value="out">Money leaving account — subtract amount</option></select></div>
-  </div>
-  <div class="field"><label>Account</label><select id="entryAccount" onchange="refreshEntryPreview()"></select></div>
-  <div class="field" id="entryCategoryWrap"><label>Category</label><select id="entryCategory"></select></div>
-  <div id="entryCalc"></div>
-  <div class="field"><label>Date</label><input id="entryDate" type="date"></div>
-  <div class="field"><label>Note / Source / Purpose</label><input id="entryNote" placeholder="Optional"></div>
-  <div class="field photoBox">
-    <label>Receipt / Photo (optional)</label>
-    <div class="photoRow"><input id="entryPhoto" type="file" accept="image/*"></div>
-    <button id="entryViewPhoto" type="button" class="tiny" style="display:none;margin-top:8px" onclick="viewCurrentEntryPhoto()">View Current Photo</button>
-  </div>
-  <button class="btn primary" onclick="saveEntry()">Save</button>
-  <button class="btn secondary" onclick="closeModal('entryModal')">Cancel</button>
-  <button id="entryDeleteBtn" class="btn danger" style="display:none" onclick="deleteEditing('entry')">Delete Entry</button>
-</div></div>
 
 <!-- Transfer -->
-<div id="transferModal" class="modal"><div class="sheet">
+<div id="transferModal" class="modal"><div class="sheet g2">
   <div class="drag"></div><h2 id="transferTitle">Transfer</h2>
-  <div class="field"><label>From Account</label><select id="transferFrom"></select></div>
-  <div class="field"><label>To Account</label><select id="transferTo"></select></div>
+  <div class="field half"><label>From Account</label><select id="transferFrom"></select></div>
+  <div class="field half"><label>To Account</label><select id="transferTo"></select></div>
   <div id="transferCalc"></div>
-  <div class="field"><label>Date</label><input id="transferDate" type="date"></div>
-  <div class="field"><label>Note</label><input id="transferNote" placeholder="Optional"></div>
+  <div class="field half"><label>Date</label><input id="transferDate" type="date"></div>
+  <div class="field half"><label>Note</label><input id="transferNote" placeholder="Optional"></div>
   <button class="btn primary" onclick="saveTransfer()">Save Transfer</button>
   <button class="btn secondary" onclick="closeModal('transferModal')">Cancel</button>
   <button id="transferDeleteBtn" class="btn danger" style="display:none" onclick="deleteEditing('transfer')">Delete</button>
 </div></div>
 
 <!-- Adjust -->
-<div id="adjustModal" class="modal"><div class="sheet">
+<div id="adjustModal" class="modal"><div class="sheet g2">
   <div class="drag"></div><h2>Adjust Account Balance</h2>
   <div class="field"><label>Account</label><select id="adjustAccount"></select></div>
   <div id="adjustCalc"></div>
-  <div class="field"><label>Date</label><input id="adjustDate" type="date"></div>
-  <div class="field"><label>Reason</label><input id="adjustNote" placeholder="e.g. balance reconciliation"></div>
+  <div class="field half"><label>Date</label><input id="adjustDate" type="date"></div>
+  <div class="field half"><label>Reason</label><input id="adjustNote" placeholder="e.g. balance reconciliation"></div>
   <button class="btn primary" onclick="saveAdjust()">Update Balance</button>
   <button class="btn secondary" onclick="closeModal('adjustModal')">Cancel</button>
   <button id="adjustDeleteBtn" class="btn danger" style="display:none" onclick="deleteEditing('adjust')">Delete</button>
@@ -638,20 +670,10 @@ function mature(date=today()){ return accountsTotal(date) - liabilityTotal(date)
 
 /* ---------- Calculator ---------- */
 function calcHTML(id,label){
-  return `<div class="calc"><div class="display"><small>${label}</small><div id="${id}Expression" class="calcExpression">Calculation: —</div><b id="${id}Display">₨ 0</b><div id="${id}Preview" class="preview"></div></div>
-  <div class="keys">
-    <button onclick="press('${id}','1')">1</button><button onclick="press('${id}','2')">2</button><button onclick="press('${id}','3')">3</button>
-    <button onclick="press('${id}','4')">4</button><button onclick="press('${id}','5')">5</button><button onclick="press('${id}','6')">6</button>
-    <button onclick="press('${id}','7')">7</button><button onclick="press('${id}','8')">8</button><button onclick="press('${id}','9')">9</button>
-    <button onclick="press('${id}','0')">0</button><button onclick="press('${id}','.')">.</button><button onclick="backspace('${id}')">←</button>
-  </div>
-  <div class="opkeys">
-    <button class="clr" onclick="clearCalc('${id}')">C</button>
-    <button class="op" onclick="press('${id}','+')">+</button>
-    <button class="op" onclick="press('${id}','-')">−</button>
-    <button class="op" onclick="press('${id}','*')">×</button>
-    <button class="op" onclick="press('${id}','/')">÷</button>
-  </div></div>`;
+  const k=c=>`<button onclick="press('${id}','${c}')">${c}</button>`;
+  const o=(c,t)=>`<button class="op" onclick="press('${id}','${c}')">${t}</button>`;
+  return `<div class="calc"><div class="display"><div class="dtop"><button class="clr" onclick="clearCalc('${id}')">C</button><div class="dm"><small>${label}</small><div id="${id}Expression" class="calcExpression">&nbsp;</div></div><b id="${id}Display">₨ 0</b></div><div id="${id}Preview" class="preview"></div></div>
+  <div class="keys4">${k(7)}${k(8)}${k(9)}${o('/','÷')}${k(4)}${k(5)}${k(6)}${o('*','×')}${k(1)}${k(2)}${k(3)}${o('-','−')}${k(0)}${k('.')}<button onclick="backspace('${id}')">⌫</button>${o('+','+')}</div></div>`;
 }
 function press(id,ch){
   const current=calc[id];
@@ -672,7 +694,7 @@ function refreshCalc(id){
   const raw=calc[id]; const val=evalCalc(raw);
   const el=document.getElementById(id+"Display"); if(el)el.textContent=fmt(val);
   const expression=document.getElementById(id+"Expression");
-  if(expression) expression.textContent=raw ? "Calculation: "+raw.replace(/\*/g," × ").replace(/\//g," ÷ ").replace(/-/g," − ").replace(/\+/g," + ") : "Calculation: —";
+  if(expression) expression.textContent=raw ? ""+raw.replace(/\*/g," × ").replace(/\//g," ÷ ").replace(/-/g," − ").replace(/\+/g," + ") : "\u00a0";
   if(id==="entry") refreshEntryPreview();
   if(id==="transfer") refreshTransferPreview();
   if(id==="adjust") refreshAdjustPreview();
@@ -682,19 +704,32 @@ transferCalc.innerHTML=calcHTML("transfer","Amount");
 adjustCalc.innerHTML=calcHTML("adjust","Adjustment (+ / −)");
 
 /* ---------- Navigation ---------- */
-let lastRec="activity";
-function go(id,index){
+const PAGES=["home","activity","accounts"];
+function go(id){
   if(id==="reports") id="activity"; if(id==="status") id="accounts";
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  const rec=id!=="home"; if(rec) lastRec=id;
-  document.body.classList.toggle("rec",rec);
-  document.querySelectorAll(".nav button").forEach((b,i)=>b.classList.toggle("active",i===(rec?1:0)));
-  document.querySelectorAll("#segBar button").forEach(b=>b.classList.toggle("active",b.dataset.go===id));
+  document.querySelectorAll(".nav button").forEach((b,i)=>b.classList.toggle("active",PAGES[i]===id));
   window.scrollTo(0,0);
   if(id==="activity") refreshActivity();
 }
-function closeModal(id){ document.getElementById(id).style.display="none"; if(id==="entryModal") entryType.disabled=false; editState={type:null,id:null}; }
+function closeModal(id){
+  if(id==="entryModal"){ editState={type:null,id:null}; entryType.disabled=false; openEntry(mode); return; }
+  document.getElementById(id).style.display="none"; editState={type:null,id:null};
+}
+function pickType(t){
+  if(entryType.disabled) return;
+  if(t==="transfer") return openTransfer();
+  if(t==="adjust") return openAdjust();
+  entryType.value=t; changeEntryType(t);
+}
+function syncEntryUI(){
+  document.querySelectorAll(".tp").forEach(b=>b.classList.toggle("on",b.dataset.t===entryType.value));
+  const ed=editState.type==="entry";
+  entryTitle.style.display=ed?"block":"none"; entryClear.textContent=ed?"Cancel":"Clear";
+  photoTag.textContent=(entryPhoto.files&&entryPhoto.files[0])?"✓":"📎";
+}
+function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove("show"),1600); }
 
 /* ---------- Unified Income / Expense / Behalf Entry ---------- */
 function openEntry(newMode){
@@ -702,7 +737,7 @@ function openEntry(newMode){
   entryType.disabled=false; entryType.value=newMode==="expense"?"expense":newMode==="behalf"?"behalf":"income";
   behalfChoice="recv_new"; behalfAction.value="plus"; liabilityDirection="plus"; behalfEffect.value="new";
   entryDate.value=today(); entryNote.value=""; entryPhoto.value=""; calc.entry="";
-  entryAccount.innerHTML=activeOptions();
+  entryAccount.innerHTML=activeOptions(window._lastAcc||"");
   changeEntryType(entryType.value); refreshCalc("entry"); entryModal.style.display="flex";
 }
 function changeEntryType(v){
@@ -773,6 +808,7 @@ function changeBehalfAction(v){
 function editEntry(id){
   const e=data.entries.find(x=>x.id===id); if(!e)return;
   if(e.mode==="behalf") return; // Behalf records are immutable; correct with a new opposite entry.
+  go("home");
   mode=e.mode; editState={type:"entry",id}; entryDeleteBtn.style.display="block"; entryViewPhoto.style.display=e.attachmentKey?"inline-flex":"none";
   entryType.value=mode; entryType.disabled=true; behalfAction.value="plus";
   entryTitle.textContent=mode==="income"?"Edit Income":"Edit Expense";
@@ -782,7 +818,7 @@ function editEntry(id){
   entryCategory.innerHTML=(mode==="income"?INCOME_CATEGORIES:EXPENSE_CATEGORIES).map(c=>`<option value="${esc(c)}" ${c===e.category?"selected":""}>${esc(c)}</option>`).join("");
   entryDate.value=e.date; entryNote.value=e.note||""; entryPhoto.value=""; calc.entry=String(e.amount); refreshCalc("entry"); entryModal.style.display="flex";
 }
-function refreshEntryPreview(){
+function refreshEntryPreview(){ syncEntryUI();
   const p=entryPreview; if(!p)return; const amount=evalCalc(calc.entry), accountId=entryAccount.value, txDate=entryDate.value||today();
   if(!accountId){p.innerHTML='<span>Select an account</span>';return;}
   const before=balance(accountId,txDate,editState.type==="entry"?{type:"entry",id:editState.id}:null);
@@ -809,6 +845,7 @@ function refreshEntryPreview(){
 async function saveEntry(){
   if(mode==="behalf" && !behalfChoice) return alert("Choose Receive or Return.");
   const amount=evalCalc(calc.entry); if(amount<=0)return alert("Enter amount."); if(!entryAccount.value)return alert("Select an account.");
+  if(editState.type!=="entry") entryDate.value=today();
   const txDate=entryDate.value||today();
   const isBehalf=mode==="behalf";
   const exclude=editState.type==="entry"?{type:"entry",id:editState.id}:null;
@@ -844,7 +881,7 @@ async function saveEntry(){
     return alert("Entry was not saved because the ledger failed an integrity check.\n\n"+issues.slice(0,5).join("\n"));
   }
   if(!saveData()){ if(old) data.entries=data.entries.map(x=>x.id===id?old:x); else data.entries=data.entries.filter(x=>x.id!==id); render(); return; }
-  closeModal("entryModal");
+  closeModal("entryModal"); toast("Saved ✓");
 }
 
 /* ---------- Transfer ---------- */
@@ -1342,9 +1379,9 @@ function historyRow(x){
   }else{
     title="Balance Adjustment";meta=`${esc(x.date)} • ${esc(acc(x.accountId)?.name||"?")}${x.note?" • "+esc(x.note):""}`;amount=(x.delta>=0?"+":"−")+fmt(Math.abs(x.delta));cls=x.delta>=0?"inc":"exp";edit=`editAdjust(${jsq(x.id)})`;
   }
-  const editAttr=edit?`class="row editable" onclick="${edit}"`:`class="row"`;
-  const editBtn=edit?`<button class="tiny" onclick="event.stopPropagation();${edit}">Edit</button>`:"";
-  return `<div ${editAttr}><div class="rowMain"><div class="rowText"><b>${title}</b><small>${meta}</small></div><div class="amt ${cls}">${amount}</div></div><div class="actions">${receipt}${editBtn}</div></div>`;
+  const sd=new Date(x.date+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short"});
+  meta=meta.replace(esc(x.date)+" • ","");
+  return `<tr class="${edit?"editable":""}" ${edit?`onclick="${edit}"`:""}><td class="d">${sd}</td><td><b>${title}</b><small>${meta}</small></td><td class="a amt ${cls}">${amount}</td><td class="x">${receipt||(edit?"›":"")}</td></tr>`;
 }
 function renderHistory(){
   const historyBalancesEl=document.getElementById("historyBalances");
@@ -1354,7 +1391,7 @@ function renderHistory(){
   if(legacyWarningEl) legacyWarningEl.style.display="none";
   const fromV=(document.getElementById("summaryFromDate")||{}).value, toV=(document.getElementById("summaryToDate")||{}).value;
   const rows=mixedHistory().filter(x=>(historyFilter==="all"||x.kind===historyFilter)&&(!fromV||x.date>=fromV)&&(!toV||x.date<=toV));
-  if(activityListEl) activityListEl.innerHTML=rows.length?rows.map(historyRow).join(""):'<div class="empty">No entries in this period</div>';
+  if(activityListEl) activityListEl.innerHTML=rows.length?'<table class="tbl"><tbody>'+rows.map(historyRow).join("")+'</tbody></table>':'<div class="empty">No entries in this period</div>';
 }
 function refreshActivity(){ renderMonthSummary(); renderHistory(); }
 function setPeriod(kind){
@@ -1391,12 +1428,12 @@ function renderStatus(){
   statusCategoryList.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row"><b>${k}</b><div class="amt exp">${fmt(v)}</div></div>`).join("")||'<div class="empty">No expenses on this date</div>';
 }
 statusDate.value=today();statusDate.addEventListener("change",render);
-entryAccount.addEventListener("change",()=>refreshEntryPreview());
+entryAccount.addEventListener("change",()=>{window._lastAcc=entryAccount.value;refreshEntryPreview();});entryPhoto.addEventListener("change",syncEntryUI);todayLbl.textContent=new Date().toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
 entryDate.addEventListener("change",()=>refreshEntryPreview());
 transferFrom.addEventListener("change",()=>refreshCalc("transfer"));transferTo.addEventListener("change",()=>refreshCalc("transfer"));
 adjustAccount.addEventListener("change",()=>refreshCalc("adjust"));
 
-render();
+render(); openEntry("expense");
 if(data.security?.enabled) lockApp();
 lockPinInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter") attemptUnlock(); });
 [pinCurrent,pinNew,pinConfirm].forEach(el=>el?.addEventListener("keydown",(e)=>{ if(e.key==="Enter") savePin(); }));
@@ -1419,7 +1456,7 @@ if(summaryFromEl&&summaryToEl){
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("sw.js?v=48",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js?v=49",{updateViaCache:"none"});
       await reg.update();
     }catch(e){}
   });
