@@ -147,8 +147,9 @@ body{background:linear-gradient(180deg,#d9ede8 0,#f3f6f5 220px) no-repeat,#f3f6f
 /* ===== MOBILE FIX ===== */
 .app{overflow-x:hidden}
 /* 3 cards in one row, like desktop, text fits */
-.strip{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr)!important;gap:6px}
-.strip .sc.main{grid-column:auto}
+.strip{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px}
+.strip .sc:first-child{grid-column:1 / -1}
+.strip .sc:first-child b{font-size:clamp(22px,7vw,30px)!important}
 .sc{padding:9px 9px 10px!important;border-radius:14px!important;overflow:hidden;min-width:0}
 .sc small{font-size:12px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px!important}
 .sc b,.sc.main b{font-size:clamp(13px,4.3vw,19px)!important;letter-spacing:-.4px!important;white-space:nowrap;overflow:hidden;text-overflow:clip;line-height:1.2}
@@ -200,8 +201,8 @@ details.more>summary{gap:6px}details.more>summary b{white-space:nowrap}
 <section id="home" class="screen active">
   <div class="topbar"><h1>Money Manager</h1><span id="todayLbl"></span></div>
   <div class="strip">
-    <div class="sc main"><small>Mature</small><b id="homeMature">Rs 0</b></div>
-    <div class="sc"><small>Accounts</small><b id="homeTotalAccounts">Rs 0</b></div>
+    <div class="sc"><small>Mature</small><b id="homeMature">Rs 0</b></div>
+    <div class="sc main"><small>Accounts</small><b id="homeTotalAccounts">Rs 0</b></div>
     <div class="sc amb" onclick="openHeld()"><small>Held ›</small><b id="homeLiabilities">Rs 0</b></div>
   </div>
   <div class="types">
